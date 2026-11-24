@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 0 0% 98%;
+  --foreground: 222 30% 12%;
+  --card: 0 0% 100%;
+  --muted: 220 16% 94%;
+  --muted-foreground: 220 9% 40%;
+  --border: 220 14% 88%;
+  --primary: 224 76% 48%;
+  --primary-foreground: 0 0% 100%;
+  --accent: 24 90% 45%;
+  --warn: 38 92% 38%;
+  --danger: 0 72% 45%;
+  --ok: 160 70% 28%;
+}
+.dark {
+  --background: 222 24% 8%;
+  --foreground: 210 20% 94%;
+  --card: 222 22% 11%;
+  --muted: 222 18% 16%;
+  --muted-foreground: 215 12% 68%;
+  --border: 222 16% 22%;
+  --primary: 217 90% 66%;
+  --primary-foreground: 222 30% 8%;
+  --accent: 28 92% 62%;
+  --warn: 42 90% 60%;
+  --danger: 0 80% 68%;
+  --ok: 160 60% 55%;
+}
+body {
+  @apply bg-background text-foreground antialiased;
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    sans-serif;
+}
+.driver-popover {
+  @apply !bg-card !text-foreground !border !border-border;
+}
+.driver-popover-title {
+  @apply !text-foreground;
+}
+.driver-popover-description {
+  @apply !text-muted-foreground;
+}
+.driver-popover-arrow-side-left.driver-popover-arrow,
+.driver-popover-arrow-side-right.driver-popover-arrow,
+.driver-popover-arrow-side-top.driver-popover-arrow,
+.driver-popover-arrow-side-bottom.driver-popover-arrow {
+  display: none;
+}

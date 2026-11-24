@@ -52,6 +52,7 @@ flowchart LR
 ```
 
 Key choices:
+
 - **Fastify** over NestJS: lighter, first-class Zod/OpenAPI via `fastify-type-provider-zod`.
 - **Drizzle** over Prisma: better pgvector support, SQL-first, fewer surprises with migrations.
 - **Embeddings:** local `sentence-transformers` (multilingual MiniLM) in the Python service. Free, no API calls.
@@ -91,6 +92,7 @@ erDiagram
 ```
 
 Notes:
+
 - `scores` stores `algorithm_version`, component values, weights used, confidence and an `inputs_json` snapshot, so every score is explainable and reproducible.
 - `trend_signals_timeseries` is keyed by (trend, country, source, metric, date); `is_estimated` and `method` columns label estimates.
 - `raw_signals` is append-only JSONB; normalisation never mutates it.
@@ -101,32 +103,32 @@ Notes:
 
 All cost Rs 0. "Conf" = default reliability score.
 
-| # | Source | Method | Free limit / cost | Legal / terms note | Conf | Phase |
-|---|---|---|---|---|---|---|
-| 1 | Google Trends | `google-trends-api` / pytrends (unofficial) | Free, undocumented limits, 429s | Unofficial; ToS grey. Cache 24h+, 1 req / few sec, backoff, manual CSV fallback | Med | 1 |
-| 2 | Google Trends RSS (daily) | RSS | Free | Public feed | Med | 1 |
-| 3 | Wikipedia Pageviews | Official REST | Free, generous | Open, attribute | High | 2 |
-| 4 | YouTube Data API v3 | Official | 10,000 units/day (search = 100 units) | Needs free key; fixture mode without | High | 2 |
-| 5 | Reddit | Official API | Free tier, low rate | Needs app registration; follow API terms (commercial use limits matter for SaaS later) | Med | 3 |
-| 6 | Amazon Best Sellers / New Releases / Movers (US, UK, DE, AE, AU, JP) | Polite public-page fetch | Free | **Amazon ToS prohibits scraping.** Risk is yours; see risks. Default: manual CSV import + very low-frequency, cached fetch behind a feature flag, off by default | Low | 1 |
-| 7 | eBay | Public Browse API free tier (key) | Free quota | Official API preferred over page scraping | Med | 3 |
-| 8 | Etsy | Open API v3 | Free, key needs approval | Official; gifts-critical. Approval may take days; fixture mode meanwhile | High | 3 |
-| 9 | Walmart / Target bestseller pages | Public pages | Free | Scraping terms apply; manual import first | Low | later |
-| 10 | AliExpress / Temu / Alibaba | Public pages | Free | Anti-bot heavy; will NOT bypass. Manual import only | Low | later |
-| 11 | Kickstarter / Indiegogo | Public pages | Free | Check robots.txt; early signal only | Low | 3 |
-| 12 | Product Hunt | Official GraphQL API | Free, token | Non-commercial default; check terms for SaaS | Med | 3 |
-| 13 | Pinterest Trends / TikTok Creative Center | **Manual export only** | Free | No public API; scraping is fragile and against terms. Import template provided | Med | 3 |
-| 14 | Google News RSS | RSS | Free | Store headline/source/date/URL only | Med | 1 |
-| 15 | GDELT | Official free API | Free | Open | Med | 2 |
-| 16 | GNews / NewsData.io / NewsAPI | Free-tier APIs | ~100 req/day each; NewsAPI free is dev-only (no commercial) | Prefer GNews/NewsData; skip NewsAPI for production | Med | 2 |
-| 17 | Trade press / D2C RSS (Inc42, YourStory, Entrackr, ET Retail, Retail Dive, etc.) | RSS | Free | Headline + LLM summary only | Med | 1 |
-| 18 | Amazon.in / Flipkart / Meesho / Nykaa / FirstCry bestsellers | Manual CSV first, polite fetch optional | Free | Same ToS caveat as Amazon US; Flipkart/Meesho are JS-heavy and anti-bot. Manual import is the reliable path | Low | 2 |
-| 19 | Instagram India hashtags | Manual input only | Free | No legal automated access | Manual | 3 |
-| 20 | Customs duty / GST (CBIC, ICEGATE) | Manual-seeded tables from public notifications, versioned | Free | Public; editable; must be verified by you or a CHA | High after verification | 4 |
-| 21 | FX | ECB/Frankfurter API (no key) | Free | Open. (exchangerate.host free tier now needs a key; Frankfurter preferred) | High | 0 |
-| 22 | BIS / WPC / CDSCO rules | Curated static rules JSON | Free | Informational only | Med | 4 |
-| 23 | Festival calendar | Static JSON shipped with app | Free | Hand-maintained, 2026–2028 | High | 0 |
-| 24 | Manual CSV/JSON import | Upload + Zod validation + templates | Free | n/a | User-set | 1 |
+| #   | Source                                                                           | Method                                                    | Free limit / cost                                           | Legal / terms note                                                                                                                                               | Conf                    | Phase |
+| --- | -------------------------------------------------------------------------------- | --------------------------------------------------------- | ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- | ----- |
+| 1   | Google Trends                                                                    | `google-trends-api` / pytrends (unofficial)               | Free, undocumented limits, 429s                             | Unofficial; ToS grey. Cache 24h+, 1 req / few sec, backoff, manual CSV fallback                                                                                  | Med                     | 1     |
+| 2   | Google Trends RSS (daily)                                                        | RSS                                                       | Free                                                        | Public feed                                                                                                                                                      | Med                     | 1     |
+| 3   | Wikipedia Pageviews                                                              | Official REST                                             | Free, generous                                              | Open, attribute                                                                                                                                                  | High                    | 2     |
+| 4   | YouTube Data API v3                                                              | Official                                                  | 10,000 units/day (search = 100 units)                       | Needs free key; fixture mode without                                                                                                                             | High                    | 2     |
+| 5   | Reddit                                                                           | Official API                                              | Free tier, low rate                                         | Needs app registration; follow API terms (commercial use limits matter for SaaS later)                                                                           | Med                     | 3     |
+| 6   | Amazon Best Sellers / New Releases / Movers (US, UK, DE, AE, AU, JP)             | Polite public-page fetch                                  | Free                                                        | **Amazon ToS prohibits scraping.** Risk is yours; see risks. Default: manual CSV import + very low-frequency, cached fetch behind a feature flag, off by default | Low                     | 1     |
+| 7   | eBay                                                                             | Public Browse API free tier (key)                         | Free quota                                                  | Official API preferred over page scraping                                                                                                                        | Med                     | 3     |
+| 8   | Etsy                                                                             | Open API v3                                               | Free, key needs approval                                    | Official; gifts-critical. Approval may take days; fixture mode meanwhile                                                                                         | High                    | 3     |
+| 9   | Walmart / Target bestseller pages                                                | Public pages                                              | Free                                                        | Scraping terms apply; manual import first                                                                                                                        | Low                     | later |
+| 10  | AliExpress / Temu / Alibaba                                                      | Public pages                                              | Free                                                        | Anti-bot heavy; will NOT bypass. Manual import only                                                                                                              | Low                     | later |
+| 11  | Kickstarter / Indiegogo                                                          | Public pages                                              | Free                                                        | Check robots.txt; early signal only                                                                                                                              | Low                     | 3     |
+| 12  | Product Hunt                                                                     | Official GraphQL API                                      | Free, token                                                 | Non-commercial default; check terms for SaaS                                                                                                                     | Med                     | 3     |
+| 13  | Pinterest Trends / TikTok Creative Center                                        | **Manual export only**                                    | Free                                                        | No public API; scraping is fragile and against terms. Import template provided                                                                                   | Med                     | 3     |
+| 14  | Google News RSS                                                                  | RSS                                                       | Free                                                        | Store headline/source/date/URL only                                                                                                                              | Med                     | 1     |
+| 15  | GDELT                                                                            | Official free API                                         | Free                                                        | Open                                                                                                                                                             | Med                     | 2     |
+| 16  | GNews / NewsData.io / NewsAPI                                                    | Free-tier APIs                                            | ~100 req/day each; NewsAPI free is dev-only (no commercial) | Prefer GNews/NewsData; skip NewsAPI for production                                                                                                               | Med                     | 2     |
+| 17  | Trade press / D2C RSS (Inc42, YourStory, Entrackr, ET Retail, Retail Dive, etc.) | RSS                                                       | Free                                                        | Headline + LLM summary only                                                                                                                                      | Med                     | 1     |
+| 18  | Amazon.in / Flipkart / Meesho / Nykaa / FirstCry bestsellers                     | Manual CSV first, polite fetch optional                   | Free                                                        | Same ToS caveat as Amazon US; Flipkart/Meesho are JS-heavy and anti-bot. Manual import is the reliable path                                                      | Low                     | 2     |
+| 19  | Instagram India hashtags                                                         | Manual input only                                         | Free                                                        | No legal automated access                                                                                                                                        | Manual                  | 3     |
+| 20  | Customs duty / GST (CBIC, ICEGATE)                                               | Manual-seeded tables from public notifications, versioned | Free                                                        | Public; editable; must be verified by you or a CHA                                                                                                               | High after verification | 4     |
+| 21  | FX                                                                               | ECB/Frankfurter API (no key)                              | Free                                                        | Open. (exchangerate.host free tier now needs a key; Frankfurter preferred)                                                                                       | High                    | 0     |
+| 22  | BIS / WPC / CDSCO rules                                                          | Curated static rules JSON                                 | Free                                                        | Informational only                                                                                                                                               | Med                     | 4     |
+| 23  | Festival calendar                                                                | Static JSON shipped with app                              | Free                                                        | Hand-maintained, 2026–2028                                                                                                                                       | High                    | 0     |
+| 24  | Manual CSV/JSON import                                                           | Upload + Zod validation + templates                       | Free                                                        | n/a                                                                                                                                                              | User-set                | 1     |
 
 Free-tier usage meter in the Source Registry reads from `rate_limit_usage` (calls used / limit / window).
 
@@ -145,17 +147,20 @@ Notation: each component is normalised to 0–100. `confidence` ∈ [0,1].
 
 **Sustainability (0–100).**
 `Sustainability = 100 · ( 0.4·(1 − spikiness) + 0.3·persistence + 0.3·slope_stability )`
+
 - spikiness = share of total interest in the top 10% of days (fad indicator)
 - persistence = fraction of last 12 weeks above the trend's 52-week median
 - slope_stability = 1 − normalised variance of rolling 8-week slope
 
 **Commercial proof (0–100), estimates only.**
 `Proof = 100 · ( 0.35·rank_score + 0.30·review_velocity + 0.20·seller_count_score + 0.15·price_stability )`
+
 - rank_score from best-seller rank percentile within category (lower rank = higher score)
 - review_velocity = new reviews per month from snapshots (needs ≥ 2 snapshots)
 - Always labelled "proxy, not sales". Sales-per-month displayed only as a range with the method shown, never a point figure.
 
 **India Lag (months) and Adoption Stage.**
+
 - For each backtest case and source country, compute cross-correlation of (differenced, seasonality-adjusted) foreign vs India search curves over lags 0–36 months; lag = argmax with correlation ≥ 0.4. Category lag = median across cases with bootstrap interval.
 - For a live trend: `lag_remaining = category_lag − (months since India curve crossed its own early-signal threshold)`.
 - **Stage** by India interest index relative to the trend's own foreign peak: `<2%` Not Yet Visible; `2–8%` Early Signal; `8–25%` Emerging; `25–60%` Growing; `60–100%` Mainstream; `>100% and flattening` Saturated. Marketplace competition count refines the stage.
@@ -164,16 +169,16 @@ Notation: each component is normalised to 0–100. `confidence` ∈ [0,1].
 **India Opportunity Score (0–100).**
 `Opp = Σ wᵢ·cᵢ`, default weights:
 
-| Component | Weight |
-|---|---|
-| Foreign momentum (blend of Momentum, Breadth, Sustainability) | 0.22 |
-| Lag window remaining | 0.18 |
-| Indian competition gap (inverse listing density) | 0.14 |
-| Price fit (INR affordability for target band) | 0.10 |
-| Margin potential (best of import / manufacture) | 0.14 |
-| Regulatory ease | 0.07 |
-| Logistics feasibility | 0.05 |
-| Seasonality alignment (festival window reachable) | 0.10 |
+| Component                                                     | Weight |
+| ------------------------------------------------------------- | ------ |
+| Foreign momentum (blend of Momentum, Breadth, Sustainability) | 0.22   |
+| Lag window remaining                                          | 0.18   |
+| Indian competition gap (inverse listing density)              | 0.14   |
+| Price fit (INR affordability for target band)                 | 0.10   |
+| Margin potential (best of import / manufacture)               | 0.14   |
+| Regulatory ease                                               | 0.07   |
+| Logistics feasibility                                         | 0.05   |
+| Seasonality alignment (festival window reachable)             | 0.10   |
 
 Sliders renormalise weights to sum to 1. **Gating:** if any of regulatory ease or margin < 15, Opp is capped at 49 and flagged.
 
@@ -182,6 +187,7 @@ Sliders renormalise weights to sum to 1. **Gating:** if any of regulatory ease o
 Estimated, scraped or sample data each cap their contribution. Shown as High ≥ 0.7, Medium 0.4–0.7, Low < 0.4. Sample data is always "Sample" regardless.
 
 **Unit economics.**
+
 - Import: `landed = FOB·fx + freight + FOB·fx·duty% + (CIF + duty)·IGST% + clearance` ; `net_margin = price − landed − fees − packaging − returns·rate − ads`; `break_even_units = fixed_costs / unit_contribution`.
 - Manufacture: `BOM + conversion + tooling/MOQ amortised + packaging + logistics` plus the same marketplace costs; hub, MOQ and lead time come from editable reference tables.
 - Recommended route by risk-adjusted contribution, MOQ working capital and lead time vs festival deadline; hybrid when import now / localise later wins.
@@ -204,6 +210,7 @@ Estimated, scraped or sample data each cap their contribution. Shown as High ≥
 ## (g) Questions and assumptions
 
 Assumptions (proceed unless you object):
+
 - Single user with email magic-link login, schema carries `user_id` everywhere (multi-user ready).
 - Fastify + Drizzle + local embeddings, as above.
 - Priority countries: US, UK, UAE, JP, KR, CN. Display INR with source currency shown.
@@ -212,6 +219,7 @@ Assumptions (proceed unless you object):
 - Seed: 30+ trends (gifts + RO), 2 years synthetic weekly series, labelled "Sample data".
 
 Questions:
+
 1. **LLM spend:** is a small Claude API budget acceptable (e.g. Rs 300–500/month with the token cap), or must it be strictly zero, running on rule-based summaries until you decide?
 2. **Amazon/Flipkart fetching:** okay to default to manual import only (with the optional flagged fetcher), given the ToS risk?
 3. **Do you want a Rs 0 hosted deployment early,** or purely local until Phase 7?

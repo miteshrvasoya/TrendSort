@@ -1,0 +1,72 @@
+[
+  {
+    "key": "diwali",
+    "name": "Diwali",
+    "dates": { "2026": "2026-11-08", "2027": "2027-10-29", "2028": "2028-11-17" },
+    "foreignEquivalent": "Christmas",
+    "gift_intensity": 5
+  },
+  {
+    "key": "rakhi",
+    "name": "Raksha Bandhan",
+    "dates": { "2026": "2026-08-28", "2027": "2027-08-17", "2028": "2028-08-05" },
+    "foreignEquivalent": "Siblings' Day",
+    "gift_intensity": 4
+  },
+  {
+    "key": "valentines",
+    "name": "Valentine's Day",
+    "dates": { "2026": "2026-02-14", "2027": "2027-02-14", "2028": "2028-02-14" },
+    "foreignEquivalent": "Valentine's Day",
+    "gift_intensity": 4
+  },
+  {
+    "key": "holi",
+    "name": "Holi",
+    "dates": { "2026": "2026-03-04", "2027": "2027-03-22", "2028": "2028-03-11" },
+    "foreignEquivalent": "Easter",
+    "gift_intensity": 2
+  },
+  {
+    "key": "eid",
+    "name": "Eid al-Fitr",
+    "dates": { "2026": "2026-03-20", "2027": "2027-03-10", "2028": "2028-02-26" },
+    "foreignEquivalent": "Eid al-Fitr",
+    "gift_intensity": 3
+  },
+  {
+    "key": "karwa-chauth",
+    "name": "Karwa Chauth",
+    "dates": { "2026": "2026-10-29", "2027": "2027-10-18", "2028": "2028-11-05" },
+    "foreignEquivalent": "Anniversary season",
+    "gift_intensity": 3
+  },
+  {
+    "key": "mothers-day",
+    "name": "Mother's Day",
+    "dates": { "2026": "2026-05-10", "2027": "2027-05-09", "2028": "2028-05-14" },
+    "foreignEquivalent": "Mother's Day",
+    "gift_intensity": 3
+  },
+  {
+    "key": "fathers-day",
+    "name": "Father's Day",
+    "dates": { "2026": "2026-06-21", "2027": "2027-06-20", "2028": "2028-06-18" },
+    "foreignEquivalent": "Father's Day",
+    "gift_intensity": 3
+  },
+  {
+    "key": "christmas",
+    "name": "Christmas",
+    "dates": { "2026": "2026-12-25", "2027": "2027-12-25", "2028": "2028-12-25" },
+    "foreignEquivalent": "Christmas",
+    "gift_intensity": 3
+  },
+  {
+    "key": "wedding-season",
+    "name": "Wedding season (Nov–Feb)",
+    "dates": { "2026": "2026-11-15", "2027": "2027-11-15", "2028": "2028-11-15" },
+    "foreignEquivalent": "Wedding season",
+    "gift_intensity": 5
+  }
+]
