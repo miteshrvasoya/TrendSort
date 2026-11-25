@@ -379,7 +379,9 @@ const GROUPS: [RegExp, string][] = [
   [/pet|dog|cat/i, "pet"],
 ];
 export function lagGroupFor(category: string | null, name = ""): string {
-  const text = `${category ?? ""} ${name}`;
-  for (const [re, g] of GROUPS) if (re.test(text)) return g;
+  // category is the stronger signal ("Wellness Gifts" beats "coffee" in the name), so try it first
+  for (const text of [category ?? "", name]) {
+    for (const [re, g] of GROUPS) if (re.test(text)) return g;
+  }
   return "general";
 }

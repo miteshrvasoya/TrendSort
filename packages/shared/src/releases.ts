@@ -14,6 +14,28 @@ export interface ReleaseNote {
 
 export const RELEASES: ReleaseNote[] = [
   {
+    version: "0.4.0",
+    date: "2026-11-27",
+    title: "Gifts vertical",
+    summary:
+      "A Gifts section built for 'what should I source for Diwali under ₹1,500?': browse by occasion, recipient, budget, age, interest and personalisation, with sourcing deadlines, hampers and corporate bulk pricing.",
+    added: [
+      "Gifts browser: filters for occasion (festivals and evergreen), recipient, INR budget band, age, interest, personalisation and corporate-friendly; hides gifts already Mainstream/Saturated in India (toggle)",
+      "Gifting windows: for each upcoming Indian festival, the latest date to place an import order and to start Indian manufacturing, and which unsaturated gifts fit",
+      "Gift of the week: the top-opportunity gift whose import window is still open, with the reason",
+      "Bundles: 2-4 item hampers from different categories with a suggested price (10% bundle discount, editable assumption)",
+      "Corporate gifting: MOQ, branding options, lead time and a bulk price-break calculator",
+      "Gift details editor on every live trend (occasions, recipients, ages, interests, price range, corporate terms)",
+      "Etsy connector (official API, needs a free key) and Amazon Most Gifted / Most Wished For lists",
+      "Source Registry shows 'needs key' for sources that require an API key",
+    ],
+    changed: ["Sample gift trends now carry gift attributes so every filter works on demo data"],
+    fixed: [],
+    removed: [],
+    forYou:
+      "Pick a festival and a budget and see which gifts are rising abroad but not yet mainstream in India, when you must order by, and what hamper to build. Margin estimates and landed cost arrive in v0.5, so each gift shows a sourcing hint but not yet a margin. Etsy data needs your free Etsy API key.",
+  },
+  {
     version: "0.3.0",
     date: "2026-11-26",
     title: "Scoring and the India lag model",

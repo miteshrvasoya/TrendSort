@@ -26,3 +26,10 @@ Rules: free only; official APIs preferred; for page fetches use `ctx.http.get(ur
 | `amazon_bestsellers` | public list pages, cheerio parser                                   | opt-in, robots enforced, 403 never bypassed; unrecognised markup yields 0 items, never fake data |
 
 RSS feeds are published for machine reading, so they skip the robots.txt check (`skipRobots`); page fetches never do. Entity matching is lexical in Phase 1 (token containment, Jaccard >= 0.6 for dedupe, US/UK spelling normalised); embeddings arrive with the analytics service in Phase 2.
+
+## Phase 3 additions
+
+| Key                  | Method                                            | Notes                                                                                                                                                                                                                     |
+| -------------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `etsy`               | Etsy Open API v3 (`x-api-key`)                    | key required (free, manual approval); searches keywords of your tracked **gift** trends; search position stored as `metrics.position`, never as rank; views/favorites stored as `metrics` (engagement proxies, not sales) |
+| `amazon_bestsellers` | + `most-gifted`, `most-wished-for` lists (US, GB) | same opt-in, robots-respecting behaviour                                                                                                                                                                                  |

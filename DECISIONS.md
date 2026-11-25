@@ -20,3 +20,8 @@
 18. **Google Trends compare requests** (one per keyword, all geos) so India and foreign share one scale; non-comparable series withhold stage, competition gap and lag window.
 19. **Lead-lag uses smoothed raw series, not STL output** (STL edge effects distorted cross-correlation in tests). A trend's own lead-lag is displayed only if correlation >= 0.4 and never feeds the score; the category lag from the back-test does.
 20. **Back-test dates are analyst estimates** from general knowledge, labelled as such everywhere, replaced per case by measurement when `measure-lag` finds a usable (>= 0.4) correlation.
+21. **Gift deadlines are formulas, not forecasts**: import = festival - 84 days lead - 21 days runway; manufacture = - 45 - 21. Constants live in `packages/shared/src/gifts.ts` and are shown in the UI.
+22. **Gift filters run in Node over a small set** (gift-vertical trends only), using shared pure helpers, so the same logic is unit-tested and no SQL duplicates it. Unclassified gifts (no profile) are excluded from attribute filters rather than guessed.
+23. **Etsy search position is never a rank**: stored as `metrics.position`, `bsr` stays null, so it cannot inflate commercial proof. A missing key fails the run with a clear message and writes nothing.
+24. **Price for gifts** comes from the gift profile; if absent, from a foreign list price converted at the latest ECB rate and labelled "not landed / not Indian retail". Margin waits for the unit-economics model (v0.5).
+25. **Gift of the week** prefers real over sample gifts, then highest opportunity with an open import window; it is derived on read, not stored.

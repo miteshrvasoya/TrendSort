@@ -25,7 +25,8 @@ describe("versioning", () => {
     expect(
       stepsFor({ sinceVersion: "0.1.0" }).every((s) => compareVersions(s.version, "0.1.0") > 0),
     ).toBe(true);
-    expect(stepsFor({ sinceVersion: "0.2.0" }).every((s) => s.version === CURRENT_VERSION)).toBe(
+    const previous = RELEASES[1]!.version;
+    expect(stepsFor({ sinceVersion: previous }).every((s) => s.version === CURRENT_VERSION)).toBe(
       true,
     );
     expect(stepsFor({ sinceVersion: null }).length).toBe(TOUR_STEPS.length);

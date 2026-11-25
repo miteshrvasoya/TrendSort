@@ -2,6 +2,23 @@
 
 All notable changes. Format: [Semantic Versioning](https://semver.org). Release notes also live in the app (What's New) and the `app_versions` / `release_notes` tables; the source of truth is `packages/shared/src/releases.ts`.
 
+## 0.4.0 — 2026-11-27 — Gifts vertical
+
+**What this means for you:** pick a festival and a budget and see which gifts are rising abroad but not yet mainstream in India, when you must order by, and what hamper to build. Margin estimates arrive in v0.5. Etsy data needs your free API key.
+
+### Added
+
+- Gifts browser (occasion, recipient, INR budget band, age, interest, personalisation, corporate), hiding Mainstream/Saturated gifts by default
+- Gifting windows: latest import-order and manufacturing-start dates per upcoming festival
+- Gift of the week, bundles (suggested price with editable 10% discount), corporate bulk price-break calculator
+- Gift details editor for live trends (`gift_profiles` table)
+- Etsy Open API connector (key required) and Amazon Most Gifted / Most Wished For lists
+- Source Registry "needs key" status
+
+### Changed
+
+- Sample gift trends carry gift attributes
+
 ## 0.3.0 — 2026-11-26 — Scoring and the India lag model
 
 **What this means for you:** you can rank trends by how early India is, see exactly why each score is what it is, and tune the weights. Margin, price fit, regulation and logistics join Opportunity in v0.5; until then it covers demand and timing only, and says so. Back-test lags are estimates until you run `measure-lag`.

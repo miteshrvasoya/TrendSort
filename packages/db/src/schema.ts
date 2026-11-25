@@ -244,6 +244,8 @@ export const productSnapshots = pgTable(
     bsr: integer("bsr"),
     listType: varchar("list_type", { length: 30 }),
     categoryPath: text("category_path"),
+    /** marketplace-specific extras, e.g. Etsy {views, favorers}; never a sales figure */
+    metrics: jsonb("metrics").notNull().default({}),
     ...provenance,
   },
   (t) => [index("product_snapshots_p_idx").on(t.productId, t.fetchedAt)],
@@ -431,3 +433,24 @@ export const backtestCases = pgTable(
   },
   (t) => [uniqueIndex("backtest_term_uq").on(t.term)],
 );
+
+/** Gift-specific attributes for a trend. Seeded for samples; editable by you for live trends. */
+export const giftProfiles = pgTable("gift_profiles", {
+  trendId: integer("trend_id")
+    .primaryKey()
+    .references(() => trendEntities.id, { onDelete: "cascade" }),
+  recipients: jsonb("recipients").$type<string[]>().notNull().default([]),
+  ageGroups: jsonb("age_groups").$type<string[]>().notNull().default([]),
+  interests: jsonb("interests").$type<string[]>().notNull().default([]),
+  personalisation: varchar("personalisation", { length: 10 }).notNull().default("none"),
+  priceMinInr: doublePrecision("price_min_inr"),
+  priceMaxInr: doublePrecision("price_max_inr"),
+  corporate: jsonb("corporate").$type<{
+    moq: number;
+    branding: string[];
+    leadTimeDays: number;
+    priceBreaks: { qty: number; discountPct: number }[];
+  } | null>(),
+  isSample: boolean("is_sample").notNull().default(false),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});

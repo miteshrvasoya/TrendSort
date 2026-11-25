@@ -1,6 +1,7 @@
 import type { Connector } from "../framework/types";
 import { amazonBestsellers } from "./amazonBestsellers";
 import { ecbFx } from "./ecbFx";
+import { etsy } from "./etsy";
 import { googleNews } from "./googleNews";
 import { googleTrends } from "./googleTrends";
 import { googleTrendsRss } from "./googleTrendsRss";
@@ -14,5 +15,6 @@ const all = [
   googleNews,
   tradePress,
   amazonBestsellers,
+  etsy,
 ] as unknown as Connector[];
 export const CONNECTORS: Record<string, Connector> = Object.fromEntries(all.map((c) => [c.key, c]));

@@ -1,0 +1,25 @@
+[
+  {
+    "trendId": 0,
+    "term": "personalised star map",
+    "listings": [
+      {
+        "listing_id": 1900000001,
+        "title": "Custom Star Map Print - Night Sky On Your Special Date",
+        "url": "https://www.etsy.com/listing/1900000001",
+        "price": { "amount": 2499, "divisor": 100, "currency_code": "USD" },
+        "views": 18200,
+        "num_favorers": 1430,
+        "images": [{ "url_170x135": "https://i.etsystatic.com/example1.jpg" }]
+      },
+      {
+        "listing_id": 1900000002,
+        "title": "Personalised Constellation Map Frame Anniversary Gift",
+        "url": "https://www.etsy.com/listing/1900000002",
+        "price": { "amount": 3499, "divisor": 100, "currency_code": "USD" },
+        "views": 9400,
+        "num_favorers": 620
+      }
+    ]
+  }
+]

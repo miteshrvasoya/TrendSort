@@ -32,6 +32,16 @@ test("login, What's New modal, guided tour, theme and source registry", async ({
   await page.goto("/trends");
   await expect(page.getByRole("link", { name: "Personalised star map frame" })).toBeVisible();
   await page.getByRole("button", { name: "Real only" }).click();
+  await page.goto("/gifts");
+  await expect(page.getByText("Gift of the week")).toBeVisible();
+  await page.getByLabel("Occasion").selectOption("diwali");
+  await page.getByLabel("Budget").selectOption("u1500");
+  await expect(page.getByText(/gift ideas/)).toBeVisible();
+  await page.goto("/gifts/windows");
+  await expect(page.getByText("Latest import order").first()).toBeVisible();
+  await page.goto("/gifts/corporate");
+  await page.getByLabel("Order quantity").fill("120");
+  await expect(page.getByText(/At 120 units/).first()).toBeVisible();
   await page.goto("/scoring");
   await expect(page.getByRole("heading", { name: "Scoring & weights" })).toBeVisible();
   await expect(page.getByText("Smart ring")).toBeVisible();

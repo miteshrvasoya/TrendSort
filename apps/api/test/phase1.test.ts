@@ -166,7 +166,7 @@ describe("sources", () => {
     await call("PATCH", "/sources/google_news_rss", { enabled: true });
   });
   it("queues a run, and rejects sources without connectors", async () => {
-    expect((await call("POST", "/sources/etsy/run")).statusCode).toBe(400);
+    expect((await call("POST", "/sources/pinterest_tiktok/run")).statusCode).toBe(400);
     const r = await call("POST", "/sources/ecb_fx/run");
     expect([200, 503]).toContain(r.statusCode);
   });

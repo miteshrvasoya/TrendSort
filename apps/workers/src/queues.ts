@@ -17,6 +17,7 @@ export const SCHEDULES: Record<string, string> = {
   google_trends_rss: "15 */6 * * *",
   google_news_rss: "0 */8 * * *",
   trade_press_rss: "20 */6 * * *",
+  etsy: "40 3 * * *", // needs ETSY_API_KEY
   amazon_bestsellers: "10 3 * * *", // no-op while the source is disabled in the registry
 };
 

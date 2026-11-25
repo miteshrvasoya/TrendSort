@@ -228,3 +228,115 @@ export interface BacktestResponse {
     measuredCorrelation: number | null;
   }[];
 }
+
+export interface GiftItem {
+  id: number;
+  name: string;
+  category: string | null;
+  isSample: boolean;
+  status: string;
+  occasions: string[];
+  recipients: string[];
+  ageGroups: string[];
+  interests: string[];
+  personalisation: string;
+  range: { min: number; max: number } | null;
+  priceSource: "profile" | "foreign_converted" | null;
+  needsDetails: boolean;
+  corporate: {
+    moq: number;
+    branding: string[];
+    leadTimeDays: number;
+    priceBreaks: { qty: number; discountPct: number }[];
+  } | null;
+  opportunity: number | null;
+  confidenceLevel: string | null;
+  stage: string | null;
+  lagMonths: number | null;
+  listings: {
+    title: string;
+    url: string | null;
+    marketplace: string;
+    price: number | null;
+    currency: string | null;
+    rank: number | null;
+    listType: string | null;
+    scraped: boolean;
+  }[];
+  hint: { hubs: string; route: string };
+  group: string;
+}
+export interface WindowInfo {
+  festivalDate: string;
+  daysToFestival: number;
+  importDeadline: string;
+  manufactureDeadline: string;
+  daysToImportDeadline: number;
+  status: "start_now" | "manufacture_only" | "missed";
+}
+export interface GiftsResponse {
+  items: GiftItem[];
+  count: number;
+  hiddenSaturated: number;
+  window: (WindowInfo & { festival: string }) | null;
+  evergreen: boolean;
+}
+export interface GiftFacets {
+  occasions: { key: string; name: string; festival: boolean }[];
+  recipients: string[];
+  ages: string[];
+  interests: string[];
+  personalisation: string[];
+  budgets: { key: string; label: string }[];
+}
+export interface GiftWeek {
+  week: string;
+  item: GiftItem | null;
+  reason: string;
+  festival?: string;
+  window?: WindowInfo;
+}
+export interface WindowsResponse {
+  today: string;
+  windows: (WindowInfo & {
+    key: string;
+    name: string;
+    foreignEquivalent: string;
+    giftIntensity: number;
+    gifts: {
+      id: number;
+      name: string;
+      opportunity: number | null;
+      stage: string | null;
+      confidenceLevel: string | null;
+      range: { min: number; max: number } | null;
+      isSample: boolean;
+      hint: string;
+      group: string;
+    }[];
+  })[];
+}
+export interface BundlesResponse {
+  candidates: number;
+  bundles: {
+    itemIds: number[];
+    names: string[];
+    sumInr: number;
+    suggestedInr: number;
+    discountPct: number;
+    note: string;
+    isSample: boolean;
+    items: {
+      id: number;
+      name: string;
+      range: { min: number; max: number } | null;
+      stage: string | null;
+      opportunity: number | null;
+    }[];
+  }[];
+}
+export interface CorporateResponse {
+  items: GiftItem[];
+  defaultPriceBreaks: { qty: number; discountPct: number }[];
+  note: string;
+}

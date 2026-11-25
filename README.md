@@ -1,6 +1,6 @@
 # TrendBridge
 
-Finds products trending abroad before they peak in India, scores India-readiness, and compares import vs Indian-manufacture economics. Free data only (Rs 0). Current version: **0.3.0 (Phase 2: Scoring and India lag model)**. See `docs/PROPOSAL.md` for the full design.
+Finds products trending abroad before they peak in India, scores India-readiness, and compares import vs Indian-manufacture economics. Free data only (Rs 0). Current version: **0.4.0 (Phase 3: Gifts vertical)**. See `docs/PROPOSAL.md` for the full design.
 
 ## Run locally (about 10 minutes)
 
@@ -36,6 +36,12 @@ Scores need the Python analytics service: `docker compose up -d analytics` (or `
 Replace the analyst-estimated back-test lags with measured ones (needs internet, uses Google Trends gently, ~30 requests): `pnpm --filter @trendbridge/workers measure-lag`.
 
 Reset sample data after a generator change: `RESEED_SAMPLE=1 pnpm db:seed`.
+
+## Gifts (Phase 3)
+
+Open **Gifts**. Pick a festival and a budget; gifts already Mainstream/Saturated in India are hidden by default. On any live trend use **Gift details** to set occasions, recipients, price range and corporate terms so it appears in the filters.
+Etsy data: get a free key at https://www.etsy.com/developers (manual approval, can take days), add `ETSY_API_KEY` to `.env`, restart the workers, then **Source Registry → Run now** on Etsy. Without a key Etsy shows "needs key" and writes nothing.
+Sourcing deadlines assume 84 days to import + 21 days to list (45 + 21 for Indian manufacture); change them in `packages/shared/src/gifts.ts`.
 
 ## Test
 

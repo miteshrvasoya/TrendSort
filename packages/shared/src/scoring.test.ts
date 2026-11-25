@@ -199,6 +199,8 @@ describe("groups and backtest data", () => {
     expect(lagGroupFor("Water Purification")).toBe("water");
     expect(lagGroupFor("Personalised Gifts")).toBe("personalised");
     expect(lagGroupFor("Tech Gifts", "Smart ring")).toBe("tech");
+    expect(lagGroupFor("Wellness Gifts", "Mushroom coffee gift set")).toBe("wellness");
+    expect(lagGroupFor(null, "Air fryer")).toBe("kitchen");
     expect(lagGroupFor(null, "xyz")).toBe("general");
   });
   it("back-test has 30 labelled estimate cases with India after the US", () => {

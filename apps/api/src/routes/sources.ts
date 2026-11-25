@@ -1,11 +1,15 @@
 import { auditLog, rateLimitUsage, sourceRuns, sources } from "@trendbridge/db";
-import { confidenceFromScore } from "@trendbridge/shared";
+import { SOURCE_CATALOG, confidenceFromScore } from "@trendbridge/shared";
 import { desc, eq } from "drizzle-orm";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { ingestQueue } from "../queue";
 
 /** Sources that have a working connector or import path in this version. */
+const ENV_KEYS = new Map(
+  SOURCE_CATALOG.filter((c) => "envKey" in c).map((c) => [c.key, (c as { envKey: string }).envKey]),
+);
+
 export const IMPLEMENTED = new Set([
   "ecb_fx",
   "google_trends",
@@ -13,6 +17,7 @@ export const IMPLEMENTED = new Set([
   "google_news_rss",
   "trade_press_rss",
   "amazon_bestsellers",
+  "etsy",
   "manual_import",
   "festival_calendar",
   "sample_seed",
@@ -24,6 +29,7 @@ const RUNNABLE = new Set([
   "google_news_rss",
   "trade_press_rss",
   "amazon_bestsellers",
+  "etsy",
 ]);
 
 export const sourceRoutes: FastifyPluginAsyncZod = async (app) => {
@@ -38,12 +44,15 @@ export const sourceRoutes: FastifyPluginAsyncZod = async (app) => {
       let status: string;
       if (!implemented) status = "not_built_yet";
       else if (!s.enabled) status = "disabled";
+      else if (ENV_KEYS.has(s.key) && !process.env[ENV_KEYS.get(s.key)!] && !s.lastSuccessAt)
+        status = "needs_key";
       else if (s.circuitState === "open") status = "circuit_open";
       else if (s.lastSuccessAt) status = s.lastSuccessAt.getTime() < stale ? "stale" : "healthy";
       else status = s.method === "static" || s.method === "manual" ? "static" : "never_run";
       return {
         ...s,
         status,
+        envKey: ENV_KEYS.get(s.key) ?? null,
         implemented,
         runnable: RUNNABLE.has(s.key),
         usedToday: usageBy.get(s.id) ?? 0,

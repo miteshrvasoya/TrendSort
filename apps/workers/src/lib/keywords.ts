@@ -1,8 +1,8 @@
 import { trackedKeywords, trendEntities, type Db } from "@trendbridge/db";
-import { and, asc, eq } from "drizzle-orm";
+import { and, asc, eq, sql } from "drizzle-orm";
 
 /** Active tracked terms, least recently fetched first. Sample entities are never fetched. */
-export async function activeKeywords(db: Db, limit: number) {
+export async function activeKeywords(db: Db, limit: number, opts: { vertical?: string } = {}) {
   return db
     .select({
       id: trackedKeywords.id,
@@ -12,7 +12,13 @@ export async function activeKeywords(db: Db, limit: number) {
     })
     .from(trackedKeywords)
     .innerJoin(trendEntities, eq(trendEntities.id, trackedKeywords.trendId))
-    .where(and(eq(trackedKeywords.active, true), eq(trendEntities.isSample, false)))
+    .where(
+      and(
+        eq(trackedKeywords.active, true),
+        eq(trendEntities.isSample, false),
+        opts.vertical ? sql`${trendEntities.verticalKeys} ? ${opts.vertical}` : undefined,
+      ),
+    )
     .orderBy(asc(trackedKeywords.lastFetchedAt))
     .limit(limit);
 }

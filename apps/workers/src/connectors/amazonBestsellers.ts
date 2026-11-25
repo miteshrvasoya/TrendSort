@@ -5,7 +5,8 @@ import { sourceIdOf } from "../lib/source";
 import type { Connector } from "../framework/types";
 import fixture from "../fixtures/amazon-bestsellers.json";
 
-export type ListType = "bestsellers" | "new-releases" | "movers-and-shakers";
+export type ListType =
+  "bestsellers" | "new-releases" | "movers-and-shakers" | "most-gifted" | "most-wished-for";
 export interface PageRaw {
   country: string;
   host: string;
@@ -38,12 +39,18 @@ const COUNTRY_HOSTS: Record<string, { host: string; currency: string }> = {
   JP: { host: "www.amazon.co.jp", currency: "JPY" },
 };
 /** Top-level list pages only (low frequency). Category-specific pages can be added later via config. */
-const TARGETS = (["US", "GB", "AE"] as const).flatMap((c) =>
-  (["bestsellers", "new-releases", "movers-and-shakers"] as const).map((l) => ({
-    country: c,
-    listType: l,
-  })),
-);
+const TARGETS = [
+  ...(["US", "GB", "AE"] as const).flatMap((c) =>
+    (["bestsellers", "new-releases", "movers-and-shakers"] as const).map((l) => ({
+      country: c,
+      listType: l,
+    })),
+  ),
+  // gift signals: what people actually buy for others / save on wish lists
+  ...(["US", "GB"] as const).flatMap((c) =>
+    (["most-gifted", "most-wished-for"] as const).map((l) => ({ country: c, listType: l })),
+  ),
+];
 
 function money(s: string): number | null {
   const m = s.replace(/,/g, "").match(/(\d+(?:\.\d+)?)/);

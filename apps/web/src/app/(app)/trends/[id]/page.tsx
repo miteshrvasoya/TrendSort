@@ -5,6 +5,7 @@ import { StaleWarning } from "@/components/stale-warning";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { GiftProfileDialog } from "@/components/gift-profile-dialog";
 import { ScoreExplain } from "@/components/score-explain";
 import { api, type NewsRow, type ProductRow, type ScoreDetail } from "@/lib/api";
 import { STAGE_LABEL, fmtScore } from "@/lib/utils";
@@ -73,6 +74,7 @@ export default function TrendDetail() {
     queryFn: () => api<ScoreDetail>(`/trends/${id}/score`),
   });
   const [off, setOff] = useState<string[]>([]);
+  const [giftOpen, setGiftOpen] = useState(false);
 
   const approve = useMutation({
     mutationFn: () => api(`/trends/${id}/approve`, { method: "POST" }),
@@ -120,6 +122,9 @@ export default function TrendDetail() {
             {d.status === "candidate" && (
               <Button onClick={() => approve.mutate()}>Approve &amp; track</Button>
             )}
+            <Button variant="outline" onClick={() => setGiftOpen(true)}>
+              Gift details
+            </Button>
             <Button
               variant="outline"
               onClick={() => confirm("Delete this trend?") && remove.mutate()}
@@ -322,6 +327,9 @@ export default function TrendDetail() {
         <h2 className="mb-2 font-semibold">News timeline</h2>
         <NewsList items={news.data ?? []} empty="No headlines matched this trend yet." />
       </Card>
+      {d && !d.isSample && (
+        <GiftProfileDialog trendId={d.id} open={giftOpen} onOpenChange={setGiftOpen} />
+      )}
     </>
   );
 }

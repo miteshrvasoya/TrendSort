@@ -9,6 +9,7 @@ export * from "./verticals";
 export * from "./schemas";
 export * from "./url";
 export * from "./scoring";
+export * from "./gifts";
 
 export const FESTIVALS = festivalsJson;
 export const SOURCE_CATALOG = sourcesJson;

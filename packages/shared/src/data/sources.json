@@ -6,7 +6,11 @@
     "method": "unofficial-wrapper",
     "scraped": false,
     "reliability": 0.6,
-    "limit": { "calls": 200, "window": "day", "note": "Undocumented; we self-limit" },
+    "limit": {
+      "calls": 200,
+      "window": "day",
+      "note": "Undocumented; we self-limit"
+    },
     "phase": 1,
     "termsNote": "Unofficial; cache 24h+, throttle, backoff on 429. Manual CSV fallback."
   },
@@ -17,7 +21,10 @@
     "method": "rss",
     "scraped": false,
     "reliability": 0.6,
-    "limit": { "calls": 48, "window": "day" },
+    "limit": {
+      "calls": 48,
+      "window": "day"
+    },
     "phase": 1,
     "termsNote": "Public feed."
   },
@@ -28,7 +35,10 @@
     "method": "official-api",
     "scraped": false,
     "reliability": 0.9,
-    "limit": { "calls": 5000, "window": "day" },
+    "limit": {
+      "calls": 5000,
+      "window": "day"
+    },
     "phase": 2,
     "termsNote": "Open REST API; attribute."
   },
@@ -39,9 +49,14 @@
     "method": "official-api",
     "scraped": false,
     "reliability": 0.85,
-    "limit": { "calls": 100, "window": "day", "note": "10,000 units/day; search costs 100" },
+    "limit": {
+      "calls": 100,
+      "window": "day",
+      "note": "10,000 units/day; search costs 100"
+    },
     "phase": 2,
-    "termsNote": "Free key required; fixture mode without."
+    "termsNote": "Free key required; fixture mode without.",
+    "envKey": "YOUTUBE_API_KEY"
   },
   {
     "key": "reddit",
@@ -50,9 +65,13 @@
     "method": "official-api",
     "scraped": false,
     "reliability": 0.6,
-    "limit": { "calls": 1000, "window": "day" },
+    "limit": {
+      "calls": 1000,
+      "window": "day"
+    },
     "phase": 3,
-    "termsNote": "Free tier; commercial use restricted."
+    "termsNote": "Free tier; commercial use restricted.",
+    "envKey": "REDDIT_CLIENT_ID"
   },
   {
     "key": "amazon_bestsellers",
@@ -61,7 +80,10 @@
     "method": "public-page",
     "scraped": true,
     "reliability": 0.4,
-    "limit": { "calls": 60, "window": "day" },
+    "limit": {
+      "calls": 60,
+      "window": "day"
+    },
     "phase": 1,
     "termsNote": "Amazon ToS restricts automated access. Polite, cached, robots.txt-respecting fetch; blocks are never bypassed. Manual CSV import is the reliable path."
   },
@@ -72,7 +94,10 @@
     "method": "official-api",
     "scraped": false,
     "reliability": 0.7,
-    "limit": { "calls": 5000, "window": "day" },
+    "limit": {
+      "calls": 5000,
+      "window": "day"
+    },
     "phase": 3,
     "termsNote": "Official API, free key."
   },
@@ -83,9 +108,13 @@
     "method": "official-api",
     "scraped": false,
     "reliability": 0.85,
-    "limit": { "calls": 5000, "window": "day" },
+    "limit": {
+      "calls": 5000,
+      "window": "day"
+    },
     "phase": 3,
-    "termsNote": "Key needs approval; best gifts signal."
+    "termsNote": "Key needs approval; best gifts signal.",
+    "envKey": "ETSY_API_KEY"
   },
   {
     "key": "walmart_target",
@@ -94,7 +123,10 @@
     "method": "public-page",
     "scraped": true,
     "reliability": 0.35,
-    "limit": { "calls": 30, "window": "day" },
+    "limit": {
+      "calls": 30,
+      "window": "day"
+    },
     "phase": 3,
     "termsNote": "Polite fetch where robots.txt allows; else manual import."
   },
@@ -105,7 +137,10 @@
     "method": "manual",
     "scraped": true,
     "reliability": 0.3,
-    "limit": { "calls": 0, "window": "day" },
+    "limit": {
+      "calls": 0,
+      "window": "day"
+    },
     "phase": 3,
     "termsNote": "Heavy anti-bot; manual import only, no bypass."
   },
@@ -116,7 +151,10 @@
     "method": "public-page",
     "scraped": true,
     "reliability": 0.4,
-    "limit": { "calls": 30, "window": "day" },
+    "limit": {
+      "calls": 30,
+      "window": "day"
+    },
     "phase": 3,
     "termsNote": "Early signal; robots.txt respected."
   },
@@ -127,9 +165,13 @@
     "method": "official-api",
     "scraped": false,
     "reliability": 0.6,
-    "limit": { "calls": 500, "window": "day" },
+    "limit": {
+      "calls": 500,
+      "window": "day"
+    },
     "phase": 3,
-    "termsNote": "Free token; non-commercial default."
+    "termsNote": "Free token; non-commercial default.",
+    "envKey": "PRODUCTHUNT_TOKEN"
   },
   {
     "key": "pinterest_tiktok",
@@ -138,7 +180,10 @@
     "method": "manual",
     "scraped": false,
     "reliability": 0.6,
-    "limit": { "calls": 0, "window": "day" },
+    "limit": {
+      "calls": 0,
+      "window": "day"
+    },
     "phase": 3,
     "termsNote": "No public API; manual export via import screen."
   },
@@ -149,7 +194,10 @@
     "method": "rss",
     "scraped": false,
     "reliability": 0.6,
-    "limit": { "calls": 300, "window": "day" },
+    "limit": {
+      "calls": 300,
+      "window": "day"
+    },
     "phase": 1,
     "termsNote": "Store headline, source, date, URL only."
   },
@@ -160,7 +208,10 @@
     "method": "official-api",
     "scraped": false,
     "reliability": 0.6,
-    "limit": { "calls": 1000, "window": "day" },
+    "limit": {
+      "calls": 1000,
+      "window": "day"
+    },
     "phase": 2,
     "termsNote": "Open."
   },
@@ -171,9 +222,13 @@
     "method": "official-api",
     "scraped": false,
     "reliability": 0.6,
-    "limit": { "calls": 100, "window": "day" },
+    "limit": {
+      "calls": 100,
+      "window": "day"
+    },
     "phase": 2,
-    "termsNote": "Free tier ~100 req/day."
+    "termsNote": "Free tier ~100 req/day.",
+    "envKey": "GNEWS_API_KEY"
   },
   {
     "key": "trade_press_rss",
@@ -182,7 +237,10 @@
     "method": "rss",
     "scraped": false,
     "reliability": 0.7,
-    "limit": { "calls": 200, "window": "day" },
+    "limit": {
+      "calls": 200,
+      "window": "day"
+    },
     "phase": 1,
     "termsNote": "Headline + short summary only; link back."
   },
@@ -193,7 +251,10 @@
     "method": "public-page",
     "scraped": true,
     "reliability": 0.35,
-    "limit": { "calls": 60, "window": "day" },
+    "limit": {
+      "calls": 60,
+      "window": "day"
+    },
     "phase": 2,
     "termsNote": "Polite fetch where allowed; manual import otherwise."
   },
@@ -204,7 +265,10 @@
     "method": "manual",
     "scraped": false,
     "reliability": 0.5,
-    "limit": { "calls": 0, "window": "day" },
+    "limit": {
+      "calls": 0,
+      "window": "day"
+    },
     "phase": 3,
     "termsNote": "Manual input only."
   },
@@ -215,7 +279,10 @@
     "method": "official-api",
     "scraped": false,
     "reliability": 0.95,
-    "limit": { "calls": 100, "window": "day" },
+    "limit": {
+      "calls": 100,
+      "window": "day"
+    },
     "phase": 0,
     "termsNote": "Free, no key, open data."
   },
@@ -226,7 +293,10 @@
     "method": "manual",
     "scraped": false,
     "reliability": 0.8,
-    "limit": { "calls": 0, "window": "day" },
+    "limit": {
+      "calls": 0,
+      "window": "day"
+    },
     "phase": 4,
     "termsNote": "Seeded from public notifications; verify with CHA/CA."
   },
@@ -237,7 +307,10 @@
     "method": "static",
     "scraped": false,
     "reliability": 0.9,
-    "limit": { "calls": 0, "window": "day" },
+    "limit": {
+      "calls": 0,
+      "window": "day"
+    },
     "phase": 0,
     "termsNote": "Static JSON shipped with the app."
   },
@@ -248,7 +321,10 @@
     "method": "manual",
     "scraped": false,
     "reliability": 0.7,
-    "limit": { "calls": 0, "window": "day" },
+    "limit": {
+      "calls": 0,
+      "window": "day"
+    },
     "phase": 1,
     "termsNote": "You supply the data."
   },
@@ -259,7 +335,10 @@
     "method": "static",
     "scraped": false,
     "reliability": 0.0,
-    "limit": { "calls": 0, "window": "day" },
+    "limit": {
+      "calls": 0,
+      "window": "day"
+    },
     "phase": 0,
     "termsNote": "Synthetic demo data. Not market truth."
   }

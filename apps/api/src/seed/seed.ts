@@ -1,5 +1,6 @@
 import {
   backtestCases,
+  giftProfiles,
   categories,
   countries,
   createDb,
@@ -12,11 +13,20 @@ import {
   verticals,
   type Db,
 } from "@trendbridge/db";
-import { BACKTEST, COUNTRIES, FESTIVALS, SOURCE_CATALOG, VERTICALS } from "@trendbridge/shared";
+import {
+  BACKTEST,
+  COUNTRIES,
+  DEFAULT_PRICE_BREAKS,
+  parseInrBand,
+  FESTIVALS,
+  SOURCE_CATALOG,
+  VERTICALS,
+} from "@trendbridge/shared";
 import bcrypt from "bcryptjs";
 import { eq, sql } from "drizzle-orm";
 import { loadConfig } from "../config";
 import { syncReleases } from "../releases-sync";
+import { GIFT_META } from "./giftmeta";
 import { SEED_TRENDS } from "./trends";
 import { foreignCurve, hashStr, indiaCurve, mulberry32, STAGE_DAMP, weekStarts } from "./synthetic";
 
@@ -180,6 +190,34 @@ export async function seedSampleTrends(db: Db, opts: { reset?: boolean } = {}) {
         isSample: true,
       })
       .returning();
+    const gm = GIFT_META[t.name];
+    if (gm) {
+      const r = parseInrBand(t.band);
+      await db
+        .insert(giftProfiles)
+        .values({
+          trendId: row!.id,
+          recipients: gm.recipients,
+          ageGroups: gm.ages,
+          interests: gm.interests,
+          personalisation: gm.pers,
+          priceMinInr: r?.min ?? null,
+          priceMaxInr: r?.max ?? null,
+          isSample: true,
+          corporate: gm.corporate
+            ? {
+                moq: 25,
+                branding:
+                  gm.pers === "none"
+                    ? ["custom box / sleeve", "personalised card"]
+                    : ["logo print", "laser engraving", "custom box / sleeve"],
+                leadTimeDays: gm.pers === "full" ? 30 : 21,
+                priceBreaks: DEFAULT_PRICE_BREAKS,
+              }
+            : null,
+        })
+        .onConflictDoNothing();
+    }
     const rnd = mulberry32(hashStr(t.name));
     const us = foreignCurve(t.profile, WEEKS, t.base, rnd);
     const rows: (typeof trendSignalsTimeseries.$inferInsert)[] = [];
