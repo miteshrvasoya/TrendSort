@@ -2,6 +2,22 @@
 
 All notable changes. Format: [Semantic Versioning](https://semver.org). Release notes also live in the app (What's New) and the `app_versions` / `release_notes` tables; the source of truth is `packages/shared/src/releases.ts`.
 
+## 0.5.0 — 2026-11-28 — Product economics, reviews and India fit
+
+**What this means for you:** open any trend and see whether it makes money in India, which route is best, what could block you, and what buyers complain about. Duty and fee rows are indicative placeholders: verify and edit them. Checks are a to-do list, not legal advice.
+
+### Added
+
+- Unit-economics calculator (import vs Indian manufacture vs hybrid): customs maths, fees, returns, ads, break-even, working capital, ROI, lead time, waterfall, sensitivity, recommended route
+- Versioned duty/GST and marketplace fee tables; saved scenarios (primary per trend feeds scoring)
+- Review mining from imported reviews (rule-based), India listing matching, India fit checklist, sourcing hints
+- Import kinds: reviews, India listings; Amazon.in lists feed India listings
+
+### Changed
+
+- Opportunity uses margin, price fit, regulatory ease and logistics when available (algorithm 1.1.0)
+- Hybrid route has no default price premium
+
 ## 0.4.0 — 2026-11-27 — Gifts vertical
 
 **What this means for you:** pick a festival and a budget and see which gifts are rising abroad but not yet mainstream in India, when you must order by, and what hamper to build. Margin estimates arrive in v0.5. Etsy data needs your free API key.

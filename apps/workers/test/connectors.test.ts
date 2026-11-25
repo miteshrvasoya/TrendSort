@@ -1,5 +1,6 @@
 import {
   createDb,
+  listingsIndia,
   newsItems,
   products,
   productSnapshots,
@@ -47,6 +48,7 @@ async function cleanup() {
   if (prods.length)
     await db.delete(productSnapshots).where(inArray(productSnapshots.productId, prods));
   await db.delete(products).where(inArray(products.trendId, ids));
+  await db.delete(listingsIndia).where(inArray(listingsIndia.trendId, ids));
   await db.delete(newsItems).where(inArray(newsItems.trendId, ids));
   await db.delete(trendEntities).where(inArray(trendEntities.id, ids));
 }
@@ -162,6 +164,15 @@ describe("connectors end-to-end on fixtures", () => {
       .from(productSnapshots)
       .where(eq(productSnapshots.productId, p!.id));
     expect(snaps[0]).toMatchObject({ bsr: 1, listType: "bestsellers" });
+    // India lists go to listings_india (matched to the tracked trend), never to foreign products
+    const [inListing] = await db
+      .select()
+      .from(listingsIndia)
+      .where(eq(listingsIndia.externalId, "B0INXYZ001"));
+    expect(inListing).toMatchObject({ marketplace: "amazon_in", priceInr: 1299, trendId });
+    expect(
+      await db.select().from(products).where(eq(products.externalId, "B0INXYZ001")),
+    ).toHaveLength(0);
     const [cand] = await db
       .select()
       .from(trendEntities)

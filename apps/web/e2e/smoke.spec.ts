@@ -9,14 +9,20 @@ test("login, What's New modal, guided tour, theme and source registry", async ({
   await expect(page.getByRole("dialog")).toContainText("Welcome to TrendBridge");
   await page.getByTestId("start-tour").click();
   await expect(page.locator(".driver-popover")).toContainText("Navigation");
-  for (let i = 0; i < 20 && (await page.locator(".driver-popover").count()) > 0; i++) {
+  const remaining = () =>
+    page.evaluate(
+      async () =>
+        (await (await fetch("http://localhost:4000/tour", { credentials: "include" })).json()).steps
+          .length as number,
+    );
+  // the tour spans pages, so the popover briefly disappears between steps: wait for the server to record completion
+  for (let i = 0; i < 200 && (await remaining()) > 0; i++) {
     const btn = page.locator(".driver-popover-next-btn");
-    await expect(btn).toBeVisible();
-    await btn.click();
-    await page.waitForTimeout(150);
+    if (await btn.isVisible()) await btn.click();
+    await page.waitForTimeout(200);
   }
+  expect(await remaining()).toBe(0);
   await expect(page.locator(".driver-popover")).toHaveCount(0);
-  await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible();
 
   // Sample banner and theme toggle
   await expect(page.getByText("Sample data.")).toBeVisible();
@@ -42,6 +48,15 @@ test("login, What's New modal, guided tour, theme and source registry", async ({
   await page.goto("/gifts/corporate");
   await page.getByLabel("Order quantity").fill("120");
   await expect(page.getByText(/At 120 units/).first()).toBeVisible();
+  await page.goto("/economics");
+  await expect(page.getByText("Recommended route")).toBeVisible();
+  await expect(page.getByTestId("placeholder-warning")).toBeVisible();
+  await page.getByLabel("Supplier price (FOB)").fill("4.5");
+  await expect(page.getByTestId("placeholder-warning")).toHaveCount(0);
+  await page.getByLabel("Selling price (incl. GST)").fill("1499");
+  await expect(page.getByText("Break-even units")).toBeVisible();
+  await page.goto("/economics/tables");
+  await expect(page.getByText("INDICATIVE").first()).toBeVisible();
   await page.goto("/scoring");
   await expect(page.getByRole("heading", { name: "Scoring & weights" })).toBeVisible();
   await expect(page.getByText("Smart ring")).toBeVisible();

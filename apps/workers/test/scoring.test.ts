@@ -1,4 +1,12 @@
-import { backtestCases, createDb, scores, trendEntities } from "@trendbridge/db";
+import {
+  backtestCases,
+  createDb,
+  productFit,
+  scores,
+  trendEntities,
+  unitEconomicsScenarios,
+  users,
+} from "@trendbridge/db";
 import {
   ALGORITHM_VERSION,
   DEFAULT_WEIGHTS,
@@ -112,6 +120,58 @@ describe("assemble (pure)", () => {
   });
 });
 
+describe("assemble: economics and fit inputs", () => {
+  const econ = (marginPct: number, price = 999) => ({
+    marginPct,
+    sellingPriceInr: price,
+    route: "import",
+  });
+  it("fills margin, price fit, regulatory and logistics from saved scenario and fit, raising coverage", () => {
+    const base = assemble(input());
+    const r = assemble(
+      input({
+        econ: econ(35),
+        giftRange: { min: 500, max: 1500 },
+        fit: { regulatory: 90, logistics: 80 },
+      }),
+    );
+    const c = r.inputs.components as Record<string, number | null>;
+    expect(c).toMatchObject({ margin: 100, priceFit: 100, regulatory: 90, logistics: 80 });
+    expect((r.inputs.opportunity as { coverage: number }).coverage).toBeGreaterThan(
+      (base.inputs.opportunity as { coverage: number }).coverage,
+    );
+  });
+  it("a very thin margin caps Opportunity at 49 no matter how strong the demand", () => {
+    const r = assemble(
+      input({
+        econ: econ(3),
+        analysis: analysis({
+          india: {
+            present: true,
+            comparable: true,
+            ratio: 0.01,
+            growth13: 1,
+            weeks_since_early: null,
+          },
+        }),
+      }),
+    );
+    expect(r.opportunity).toBe(49);
+    expect((r.inputs.opportunity as { capped: boolean }).capped).toBe(true);
+  });
+  it("price above the gift budget lowers price fit; no gift range leaves it unavailable", () => {
+    const hi = assemble(input({ econ: econ(30, 1875), giftRange: { min: 500, max: 1500 } })).inputs
+      .components as Record<string, number | null>;
+    expect(hi.priceFit).toBeCloseTo(50, 0);
+    const none = assemble(input({ econ: econ(30), giftRange: null })).inputs.components as Record<
+      string,
+      number | null
+    >;
+    expect(none.priceFit).toBeNull();
+    expect(none.margin).not.toBeNull();
+  });
+});
+
 describe("runScoring (DB, fake analytics)", () => {
   const { db, pool } = createDb(
     process.env.DATABASE_URL ?? "postgres://postgres@localhost:5432/trendbridge",
@@ -177,6 +237,63 @@ describe("runScoring (DB, fake analytics)", () => {
     expect(today[0]!.confidence).toBeLessThanOrEqual(0.2);
     expect((today[0]!.inputs as { comparable: boolean }).comparable).toBe(true);
     await db.delete(scores).where(eq(scores.id, today[0]!.id));
+  });
+  it("feeds a saved scenario and fit profile into the score", async () => {
+    const now = new Date("2026-11-26T10:00:00Z");
+    const [u] = await db
+      .insert(users)
+      .values({ email: "scoring-test@example.invalid", passwordHash: "x" })
+      .onConflictDoNothing()
+      .returning();
+    const userId =
+      u?.id ??
+      (await db.select().from(users).where(eq(users.email, "scoring-test@example.invalid")))[0]!.id;
+    await db.delete(unitEconomicsScenarios).where(eq(unitEconomicsScenarios.trendId, sampleId));
+    await db.delete(productFit).where(eq(productFit.trendId, sampleId));
+    await db.insert(unitEconomicsScenarios).values({
+      userId,
+      trendId: sampleId,
+      name: "t",
+      isPrimary: true,
+      assumptions: { sellingPriceInr: 999 },
+      results: { best: { marginPct: 21, route: "hybrid" } },
+      isSample: true,
+    });
+    await db.insert(productFit).values({
+      trendId: sampleId,
+      attrs: {
+        electrical: false,
+        wireless: false,
+        battery: false,
+        foodContact: false,
+        cosmetic: false,
+        waterRelated: false,
+        animalDerived: false,
+        liquidOrHazmat: false,
+        fragile: false,
+        festiveColourSensitive: false,
+        size: "small",
+      },
+      isSample: true,
+    });
+    await runScoring(db, fake, { trendIds: [sampleId], now });
+    const [row] = await db
+      .select()
+      .from(scores)
+      .where(eq(scores.trendId, sampleId))
+      .orderBy(desc(scores.computedAt))
+      .limit(1);
+    const c = (
+      row!.inputs as { components: Record<string, number | null>; econ: { route: string } }
+    ).components;
+    expect(c.margin).toBeCloseTo(60, 0); // 21 / 35
+    expect(c.regulatory).toBe(95);
+    expect(c.logistics).toBe(100);
+    expect((row!.inputs as { econ: { route: string } }).econ.route).toBe("hybrid");
+    await db.delete(scores).where(eq(scores.id, row!.id));
+    await db.delete(unitEconomicsScenarios).where(eq(unitEconomicsScenarios.trendId, sampleId));
+    await db.delete(productFit).where(eq(productFit.trendId, sampleId));
+    await db.delete(users).where(eq(users.email, "scoring-test@example.invalid"));
   });
   it("skips trends with no series", async () => {
     const [t] = await db

@@ -1,4 +1,4 @@
-import { giftProfiles, rawSignals, trendEntities, categories } from "@trendbridge/db";
+import { giftProfiles, trendEntities, categories } from "@trendbridge/db";
 import {
   AGE_GROUPS,
   BUDGET_BANDS,
@@ -23,6 +23,7 @@ import { eq, sql } from "drizzle-orm";
 import type { FastifyInstance } from "fastify";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
+import { fxRates } from "../lib-fx";
 import { opportunityFor, userWeights } from "../lib-scores";
 
 export interface GiftItem {
@@ -63,25 +64,9 @@ export interface GiftItem {
   group: string;
 }
 
-/** INR per 1 unit of currency from the latest ECB raw signal; empty when the FX connector has never run. */
-async function fxRates(app: FastifyInstance): Promise<Record<string, number>> {
-  const [r] = await app.db
-    .select()
-    .from(rawSignals)
-    .where(eq(rawSignals.kind, "ecb_fx"))
-    .orderBy(sql`fetched_at desc`)
-    .limit(1);
-  const rates = (r?.payload as { rates?: Record<string, number> } | undefined)?.rates ?? {};
-  return Object.fromEntries(
-    Object.entries(rates)
-      .filter(([, v]) => v > 0)
-      .map(([c, perInr]) => [c, 1 / perInr]),
-  );
-}
-
 export async function loadGiftItems(app: FastifyInstance, userId: string): Promise<GiftItem[]> {
   const weights = await userWeights(app.db, userId);
-  const fx = await fxRates(app);
+  const fx = (await fxRates(app)).rates;
   const trends = await app.db
     .select({ t: trendEntities, gp: giftProfiles, cat: categories.name })
     .from(trendEntities)

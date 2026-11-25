@@ -15,7 +15,8 @@ async function waitFor(selector: string, ms = 4000): Promise<Element | null> {
   const end = Date.now() + ms;
   while (Date.now() < end) {
     const el = document.querySelector(selector);
-    if (el) return el;
+    // must be laid out: a zero-height placeholder (data still loading) cannot be highlighted
+    if (el && (el as HTMLElement).getBoundingClientRect().height > 0) return el;
     await new Promise((r) => setTimeout(r, 100));
   }
   return null;
@@ -44,24 +45,33 @@ export function TourController() {
               overlayOpacity: 0.55,
               onDestroyed: () => resolve("done"),
             });
-            d.highlight({
-              element: el,
-              popover: {
-                title: `${s.title} (${i + 1}/${steps.length})`,
-                description: s.body,
-                showButtons: ["next", "previous", "close"],
-                nextBtnText: i === steps.length - 1 ? "Finish" : "Next",
-                prevBtnText: "Back",
-                onNextClick: () => {
-                  resolve("next");
-                  d.destroy();
+            try {
+              d.highlight({
+                element: el,
+                popover: {
+                  title: `${s.title} (${i + 1}/${steps.length})`,
+                  description: s.body,
+                  showButtons: ["next", "previous", "close"],
+                  nextBtnText: i === steps.length - 1 ? "Finish" : "Next",
+                  prevBtnText: "Back",
+                  onNextClick: () => {
+                    resolve("next");
+                    d.destroy();
+                  },
+                  onPrevClick: () => {
+                    resolve("prev");
+                    d.destroy();
+                  },
                 },
-                onPrevClick: () => {
-                  resolve("prev");
-                  d.destroy();
-                },
-              },
-            });
+              });
+            } catch {
+              try {
+                d.destroy();
+              } catch {
+                /* nothing to clean up */
+              }
+              resolve("next"); // a step that cannot be shown must never stop the whole tour
+            }
           });
           if (dir === "done") break;
           if (dir === "prev") i = Math.max(-1, i - 2);

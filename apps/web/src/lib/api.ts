@@ -340,3 +340,82 @@ export interface CorporateResponse {
   defaultPriceBreaks: { qty: number; discountPct: number }[];
   note: string;
 }
+
+export interface DefaultsResponse {
+  assumptions: import("@trendbridge/shared").Assumptions;
+  sources: Record<string, string>;
+  group: string;
+  trendName: string | null;
+  tableVersions: { duty: number | null; fee: number | null };
+  fxAsOf: string | null;
+}
+export interface ScenarioRow {
+  id: number;
+  trendId: number | null;
+  name: string;
+  isPrimary: boolean;
+  isSample: boolean;
+  assumptions: import("@trendbridge/shared").Assumptions;
+  results: import("@trendbridge/shared").EconomicsResult;
+  tableVersions: Record<string, number | null>;
+  updatedAt: string;
+}
+export interface TablesResponse {
+  duty: {
+    id: number;
+    groupKey: string;
+    hsCode: string;
+    basicDutyPct: number;
+    igstPct: number;
+    otherPct: number;
+    version: number;
+    isIndicative: boolean;
+    effectiveFrom: string;
+    note: string | null;
+  }[];
+  fees: {
+    id: number;
+    marketplace: string;
+    category: string;
+    referralPct: number;
+    closingFeeInr: number;
+    version: number;
+    isIndicative: boolean;
+    effectiveFrom: string;
+  }[];
+  dutyHistory: TablesResponse["duty"];
+  feeHistory: TablesResponse["fees"];
+  groups: string[];
+  marketplaces: string[];
+}
+export interface ReviewsResponse {
+  analysis: import("@trendbridge/shared").ReviewAnalysis | null;
+  sources: string[];
+  method: string;
+}
+export interface IndiaListingsResponse {
+  listings: {
+    id: number;
+    marketplace: string;
+    title: string;
+    priceInr: number | null;
+    rating: number | null;
+    reviewCount: number | null;
+    url: string | null;
+  }[];
+  count: number;
+  priceRange: { min: number; median: number; max: number } | null;
+  indiaDataRows: number;
+  indiaDataAt: string | null;
+  verdict: "listings_found" | "none_found_in_scanned_lists" | "not_checked";
+  caveat: string;
+}
+export interface FitResponse {
+  saved: boolean;
+  attrs: import("@trendbridge/shared").FitAttrs;
+  inferred: import("@trendbridge/shared").FitAttrs;
+  brandHits: string[];
+  checks: import("@trendbridge/shared").FitCheck[];
+  scores: { regulatory: number; logistics: number };
+  disclaimer: string;
+}

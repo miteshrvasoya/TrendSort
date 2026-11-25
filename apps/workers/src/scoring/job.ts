@@ -1,5 +1,8 @@
 import {
   backtestCases,
+  giftProfiles,
+  productFit,
+  unitEconomicsScenarios,
   categories,
   newsItems,
   productSnapshots,
@@ -12,6 +15,10 @@ import {
 } from "@trendbridge/db";
 import {
   COUNTRIES,
+  detectBrands,
+  fitScores,
+  runFitChecks,
+  type FitAttrs,
   FESTIVALS,
   ALGORITHM_VERSION,
   commercialProof,
@@ -130,6 +137,37 @@ export async function runScoring(
         lagCache.set(group, lag);
       }
 
+      // Phase 4 inputs: only from what you (or the sample seed) saved. Nothing is inferred into the score.
+      const [scn] = await db
+        .select()
+        .from(unitEconomicsScenarios)
+        .where(
+          and(eq(unitEconomicsScenarios.trendId, t.id), eq(unitEconomicsScenarios.isPrimary, true)),
+        )
+        .limit(1);
+      const best = (scn?.results as { best?: { marginPct: number; route: string } } | undefined)
+        ?.best;
+      const econ =
+        scn && best
+          ? {
+              marginPct: best.marginPct,
+              sellingPriceInr: (scn.assumptions as { sellingPriceInr: number }).sellingPriceInr,
+              route: best.route,
+            }
+          : null;
+      const [gp] = await db.select().from(giftProfiles).where(eq(giftProfiles.trendId, t.id));
+      const giftRange =
+        gp?.priceMinInr != null && gp.priceMaxInr != null
+          ? { min: gp.priceMinInr, max: gp.priceMaxInr }
+          : null;
+      const [fitRow] = await db.select().from(productFit).where(eq(productFit.trendId, t.id));
+      const fit = fitRow
+        ? fitScores(
+            runFitChecks(fitRow.attrs as FitAttrs, detectBrands(prods.map((p) => p.title))),
+            fitRow.attrs as FitAttrs,
+          )
+        : null;
+
       const rec = assemble({
         analysis,
         comparable,
@@ -141,6 +179,9 @@ export async function runScoring(
         categoryLag: lag,
         lagGroup: group,
         freshnessDays,
+        econ,
+        giftRange,
+        fit,
       });
 
       // one row per trend per version per day

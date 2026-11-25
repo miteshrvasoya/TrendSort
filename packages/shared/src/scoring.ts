@@ -1,7 +1,7 @@
 import type { AdoptionStage } from "./schemas";
 
 /** Scoring algorithm version. Bump on any formula change; scores are stored per version. */
-export const ALGORITHM_VERSION = "1.0.0";
+export const ALGORITHM_VERSION = "1.1.0";
 
 // ---------------------------------------------------------------- weights
 export const COMPONENT_KEYS = [
@@ -223,7 +223,8 @@ export const EVERGREEN_OCCASIONS = new Set([
   "baby-shower",
   "corporate",
 ]);
-export const IMPORT_LEAD_DAYS = 84; // order + production + sea/air freight + clearance
+export { IMPORT_LEAD_DAYS } from "./constants";
+import { IMPORT_LEAD_DAYS } from "./constants";
 
 /** Best alignment across the trend's occasions. null when the trend has no occasions. */
 export function seasonalityScore(

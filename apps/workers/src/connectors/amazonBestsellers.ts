@@ -1,4 +1,4 @@
-import { productSnapshots, products } from "@trendbridge/db";
+import { listingsIndia, productSnapshots, products } from "@trendbridge/db";
 import * as cheerio from "cheerio";
 import { deriveTerm, findOrCreateCandidate, loadEntityIndex, matchEntity } from "../lib/entities";
 import { sourceIdOf } from "../lib/source";
@@ -37,10 +37,11 @@ const COUNTRY_HOSTS: Record<string, { host: string; currency: string }> = {
   AE: { host: "www.amazon.ae", currency: "AED" },
   AU: { host: "www.amazon.com.au", currency: "AUD" },
   JP: { host: "www.amazon.co.jp", currency: "JPY" },
+  IN: { host: "www.amazon.in", currency: "INR" },
 };
 /** Top-level list pages only (low frequency). Category-specific pages can be added later via config. */
 const TARGETS = [
-  ...(["US", "GB", "AE"] as const).flatMap((c) =>
+  ...(["US", "GB", "AE", "IN"] as const).flatMap((c) =>
     (["bestsellers", "new-releases", "movers-and-shakers"] as const).map((l) => ({
       country: c,
       listType: l,
@@ -153,6 +154,35 @@ export const amazonBestsellers: Connector<PageRaw, Item> = {
     const index = await loadEntityIndex(ctx.db);
     for (const it of items) {
       let trendId = matchEntity(index, it.title);
+      if (it.country === "IN") {
+        // India side: stored as listings (competition evidence), never as foreign products and never creating candidates
+        await ctx.db
+          .insert(listingsIndia)
+          .values({
+            trendId,
+            marketplace: it.marketplace,
+            externalId: it.asin,
+            title: it.title,
+            priceInr: it.price,
+            rating: it.rating,
+            reviewCount: it.reviewCount,
+            url: it.url,
+            sourceId,
+            confidence: 0.4,
+          })
+          .onConflictDoUpdate({
+            target: [listingsIndia.marketplace, listingsIndia.externalId],
+            set: {
+              title: it.title,
+              priceInr: it.price,
+              rating: it.rating,
+              reviewCount: it.reviewCount,
+              trendId: trendId ?? undefined,
+              fetchedAt: new Date(),
+            },
+          });
+        continue;
+      }
       if (!trendId && it.listType === "movers-and-shakers") {
         const term = deriveTerm(it.title);
         trendId =

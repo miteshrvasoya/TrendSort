@@ -14,6 +14,31 @@ export interface ReleaseNote {
 
 export const RELEASES: ReleaseNote[] = [
   {
+    version: "0.5.0",
+    date: "2026-11-28",
+    title: "Product economics, reviews and India fit",
+    summary:
+      "Every product page now answers 'is it worth selling here?': a landed-cost and margin calculator that compares import, Indian manufacture and a hybrid, review themes, matching Indian listings and an India fit checklist. Margin, price fit, regulation and logistics now feed the Opportunity score.",
+    added: [
+      "Unit-economics calculator: customs maths (CIF, duty, SWS, IGST), marketplace fees, returns, ads, packaging; import vs Indian manufacture vs hybrid side by side with break-even units, working capital, ROI, lead time, a margin waterfall, sensitivity and a recommended route with reasons (or skip)",
+      "Editable, versioned duty/GST and marketplace fee tables; scenarios record which version they used",
+      "Saved scenarios per trend; the primary one feeds the trend's score",
+      "Review mining from reviews you import: praise, complaints and 'make yours better' hints (rule-based, no AI)",
+      "India listing matching from Amazon.in lists and imports, with an honest 'not checked / not found in scanned lists' status",
+      "India fit checklist: voltage and plug, BIS, WPC, FSSAI, CDSCO, batteries, water type and RO fit, cultural and colour fit, labelling, import policy and trademark flags, each naming who to verify with",
+      "Sourcing hints on every trend page",
+      "Import screen now accepts reviews and India listings",
+    ],
+    changed: [
+      "Opportunity now uses margin potential, price fit, regulatory ease and logistics when a scenario and fit profile exist (algorithm 1.1.0); a very thin margin caps the score at 49",
+      "Hybrid route no longer assumes a price premium unless you set one",
+    ],
+    fixed: [],
+    removed: [],
+    forYou:
+      "Open any trend and you can see whether it makes money in India, which route is best, what could block you (certifications, labelling, batteries), and what buyers complain about so you can improve on it. Duty and fee rows start as indicative placeholders: verify them with your CHA and seller portal, then edit them. Checks are a to-do list, not legal advice.",
+  },
+  {
     version: "0.4.0",
     date: "2026-11-27",
     title: "Gifts vertical",

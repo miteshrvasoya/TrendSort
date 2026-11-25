@@ -1,6 +1,6 @@
 # TrendBridge
 
-Finds products trending abroad before they peak in India, scores India-readiness, and compares import vs Indian-manufacture economics. Free data only (Rs 0). Current version: **0.4.0 (Phase 3: Gifts vertical)**. See `docs/PROPOSAL.md` for the full design.
+Finds products trending abroad before they peak in India, scores India-readiness, and compares import vs Indian-manufacture economics. Free data only (Rs 0). Current version: **0.5.0 (Phase 4: Product economics, reviews and India fit)**. See `docs/PROPOSAL.md` for the full design.
 
 ## Run locally (about 10 minutes)
 
@@ -42,6 +42,10 @@ Reset sample data after a generator change: `RESEED_SAMPLE=1 pnpm db:seed`.
 Open **Gifts**. Pick a festival and a budget; gifts already Mainstream/Saturated in India are hidden by default. On any live trend use **Gift details** to set occasions, recipients, price range and corporate terms so it appears in the filters.
 Etsy data: get a free key at https://www.etsy.com/developers (manual approval, can take days), add `ETSY_API_KEY` to `.env`, restart the workers, then **Source Registry → Run now** on Etsy. Without a key Etsy shows "needs key" and writes nothing.
 Sourcing deadlines assume 84 days to import + 21 days to list (45 + 21 for Indian manufacture); change them in `packages/shared/src/gifts.ts`.
+
+## Economics, reviews and fit (Phase 4)
+
+Open a trend, then **Unit economics → Open calculator**. Defaults come from **Economics → Edit duty & fee tables** (indicative placeholders; verify with your CHA and seller portal, then edit: each edit is a new version). Save a scenario as the trend's primary to feed its margin into the score, then **Re-score all**. Reviews and India listings are added through **Import**. See `docs/ECONOMICS.md`.
 
 ## Test
 

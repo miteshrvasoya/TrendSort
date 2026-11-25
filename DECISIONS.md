@@ -25,3 +25,9 @@
 23. **Etsy search position is never a rank**: stored as `metrics.position`, `bsr` stays null, so it cannot inflate commercial proof. A missing key fails the run with a clear message and writes nothing.
 24. **Price for gifts** comes from the gift profile; if absent, from a foreign list price converted at the latest ECB rate and labelled "not landed / not Indian retail". Margin waits for the unit-economics model (v0.5).
 25. **Gift of the week** prefers real over sample gifts, then highest opportunity with an open import window; it is derived on read, not stored.
+26. **Economics are pure shared functions** with hand-computed tests; the web runs them live and the API recomputes on save, so numbers cannot drift between screens.
+27. **Duty/fee defaults are loudly indicative placeholders** by group (not per-HS-code claims), versioned and editable; scenarios store the version used. Nothing is presented as an official rate.
+28. **Hybrid = import + local finishing** (e.g. import blanks, personalise in India), with no default price premium so it only wins when you say it earns one.
+29. **Reviews are imported, not scraped**, and mined with a lexicon (Rs 0, no LLM). India listings come from Amazon.in top lists plus imports; the UI distinguishes "not checked" from "none found in scanned lists".
+30. **Only saved fit attributes feed scores.** Heuristic inference is shown and marked, never silently scored. Same rule for scenarios: only a primary scenario feeds margin.
+31. **Text matching helpers moved to `packages/shared/src/text.ts`** and are used by both workers and API.

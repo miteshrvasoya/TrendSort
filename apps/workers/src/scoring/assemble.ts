@@ -7,6 +7,8 @@ import {
   computeOpportunity,
   confidence,
   lagWindowScore,
+  marginComponent,
+  priceFitComponent,
   stageFromRatio,
   type AdoptionStage,
   type Components,
@@ -25,6 +27,11 @@ export interface AssembleInput {
   categoryLag: CategoryLag;
   lagGroup: string;
   freshnessDays: number | null;
+  /** from the trend's primary unit-economics scenario (null when none saved) */
+  econ?: { marginPct: number; sellingPriceInr: number; route: string } | null;
+  giftRange?: { min: number; max: number } | null;
+  /** from saved India fit attributes (null when none saved) */
+  fit?: { regulatory: number; logistics: number } | null;
 }
 
 export interface ScoreRecord {
@@ -63,10 +70,10 @@ export function assemble(i: AssembleInput): ScoreRecord {
     foreignMomentum,
     lagWindow: lagWindowScore(i.categoryLag.lag_months, monthsEarly, stage),
     competitionGap: competitionGapFromRatio(stage == null ? null : ratio),
-    priceFit: null,
-    margin: null,
-    regulatory: null,
-    logistics: null,
+    priceFit: i.econ ? priceFitComponent(i.econ.sellingPriceInr, i.giftRange ?? null) : null,
+    margin: i.econ ? marginComponent(i.econ.marginPct) : null,
+    regulatory: i.fit?.regulatory ?? null,
+    logistics: i.fit?.logistics ?? null,
     seasonality: i.seasonality,
   };
   const opp = computeOpportunity(components, DEFAULT_WEIGHTS);
@@ -105,6 +112,8 @@ export function assemble(i: AssembleInput): ScoreRecord {
       leadLag: i.analysis.lead_lag,
       proof: i.proof,
       categoryLag: { ...i.categoryLag, group: i.lagGroup },
+      econ: i.econ ?? null,
+      fit: i.fit ?? null,
       sourceTypes: i.sourceTypes,
       comparable: i.comparable,
       notes,

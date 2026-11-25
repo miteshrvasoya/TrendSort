@@ -1,5 +1,9 @@
 import {
   backtestCases,
+  dutyGstTables,
+  feeTables,
+  productFit,
+  unitEconomicsScenarios,
   giftProfiles,
   categories,
   countries,
@@ -16,6 +20,12 @@ import {
 import {
   BACKTEST,
   COUNTRIES,
+  DUTY_GROUPS,
+  baseAssumptions,
+  computeEconomics,
+  dutyGroupFor,
+  inferFitAttrs,
+  lagGroupFor,
   DEFAULT_PRICE_BREAKS,
   parseInrBand,
   FESTIVALS,
@@ -157,6 +167,152 @@ export async function seedBacktest(db: Db) {
   await db.execute(sql`delete from scores where algorithm_version = 'sample-0'`);
 }
 
+const DUTY_SEED: Record<string, { hs: string; bcd: number; igst: number }> = {
+  general: { hs: "n/a", bcd: 20, igst: 18 },
+  plastics: { hs: "3924", bcd: 10, igst: 18 },
+  "kitchen-steel": { hs: "7323", bcd: 10, igst: 18 },
+  drinkware: { hs: "9617", bcd: 10, igst: 18 },
+  electronics: { hs: "8543", bcd: 20, igst: 18 },
+  cosmetics: { hs: "3304", bcd: 20, igst: 18 },
+  "decor-candles": { hs: "3406", bcd: 10, igst: 18 },
+  "water-purification": { hs: "8421", bcd: 10, igst: 18 },
+};
+const FEE_SEED: Record<string, { amazon: [number, number]; flipkart: [number, number] }> = {
+  general: { amazon: [12, 25], flipkart: [11, 20] },
+  plastics: { amazon: [12, 25], flipkart: [11, 20] },
+  "kitchen-steel": { amazon: [10, 25], flipkart: [9, 20] },
+  drinkware: { amazon: [10, 25], flipkart: [9, 20] },
+  electronics: { amazon: [8, 25], flipkart: [7, 20] },
+  cosmetics: { amazon: [9, 25], flipkart: [8, 20] },
+  "decor-candles": { amazon: [12, 25], flipkart: [11, 20] },
+  "water-purification": { amazon: [9, 25], flipkart: [8, 20] },
+};
+
+/** INDICATIVE placeholders from general knowledge. Never overwrites rows you have edited (versions only ever grow). */
+export async function seedEconomicsTables(db: Db) {
+  const [d] = (
+    await db.execute(
+      sql`select count(*)::int as n from duty_gst_tables where group_key is not null`,
+    )
+  ).rows as { n: number }[];
+  if ((d?.n ?? 0) === 0) {
+    const eff = new Date().toISOString().slice(0, 10);
+    for (const g of DUTY_GROUPS) {
+      const r = DUTY_SEED[g]!;
+      await db.insert(dutyGstTables).values({
+        groupKey: g,
+        hsCode: r.hs,
+        description: g,
+        basicDutyPct: r.bcd,
+        igstPct: r.igst,
+        otherPct: 0,
+        version: 1,
+        isIndicative: true,
+        effectiveFrom: eff,
+        note: "INDICATIVE placeholder from general knowledge. Rates change often: verify on the CBIC / ICEGATE tariff before ordering.",
+      });
+    }
+  }
+  const [f] = (await db.execute(sql`select count(*)::int as n from fee_tables`)).rows as {
+    n: number;
+  }[];
+  if ((f?.n ?? 0) === 0) {
+    const eff = new Date().toISOString().slice(0, 10);
+    for (const g of DUTY_GROUPS) {
+      const r = FEE_SEED[g]!;
+      await db.insert(feeTables).values({
+        marketplace: "amazon_in",
+        category: g,
+        referralPct: r.amazon[0],
+        closingFeeInr: r.amazon[1],
+        version: 1,
+        isIndicative: true,
+        effectiveFrom: eff,
+      });
+      await db.insert(feeTables).values({
+        marketplace: "flipkart",
+        category: g,
+        referralPct: r.flipkart[0],
+        closingFeeInr: r.flipkart[1],
+        version: 1,
+        isIndicative: true,
+        effectiveFrom: eff,
+      });
+    }
+  }
+}
+
+/** Synthetic scenarios and fit attributes for the sample trends (flagged sample). */
+export async function seedSampleEconomics(db: Db, userId: string) {
+  const rows = (
+    await db.execute(sql`
+    select t.id, t.name, c.name as category, g.price_min_inr as pmin, g.price_max_inr as pmax
+    from trend_entities t left join categories c on c.id = t.category_id left join gift_profiles g on g.trend_id = t.id
+    where t.is_sample and not exists (select 1 from unit_economics_scenarios u where u.trend_id = t.id)`)
+  ).rows as {
+    id: number;
+    name: string;
+    category: string | null;
+    pmin: number | null;
+    pmax: number | null;
+  }[];
+  for (const r of rows) {
+    const seedT = SEED_TRENDS.find((x) => x.name === r.name);
+    const range =
+      parseInrBand(seedT?.band) ??
+      (r.pmin != null ? { min: r.pmin, max: r.pmax! } : { min: 500, max: 1500 });
+    const lag = lagGroupFor(r.category, r.name);
+    const group = dutyGroupFor(lag);
+    const fit = inferFitAttrs(lag, r.name);
+    await db
+      .insert(productFit)
+      .values({ trendId: r.id, attrs: fit, isSample: true })
+      .onConflictDoNothing();
+    const a = baseAssumptions();
+    const price = Math.max(99, Math.round((range.min + range.max) / 2 / 100) * 100 - 1);
+    a.sellingPriceInr = price;
+    a.feeCategory = group;
+    const [duty] = (
+      await db.execute(
+        sql`select basic_duty_pct as bcd, igst_pct as igst from duty_gst_tables where group_key = ${group} order by version desc limit 1`,
+      )
+    ).rows as { bcd: number; igst: number }[];
+    const [fee] = (
+      await db.execute(
+        sql`select referral_pct as r, closing_fee_inr as c from fee_tables where marketplace = 'amazon_in' and category = ${group} order by version desc limit 1`,
+      )
+    ).rows as { r: number; c: number }[];
+    if (duty) {
+      a.import.bcdPct = duty.bcd;
+      a.import.igstPct = duty.igst;
+    }
+    if (fee) {
+      a.referralPct = fee.r;
+      a.closingFeeInr = fee.c;
+    }
+    a.import.fobAmount = Math.round(((price * 0.16) / 85) * 100) / 100;
+    a.import.weightKg = fit.size === "large" ? 4 : fit.size === "small" ? 0.15 : 0.5;
+    a.import.certificationInr = fit.wireless ? 150000 : fit.electrical ? 80000 : 0;
+    a.manufacture.bomInr = Math.round(price * 0.2);
+    a.manufacture.conversionInr = Math.round(price * 0.07);
+    a.manufacture.toolingInr = fit.size === "large" ? 250000 : 60000;
+    a.manufacture.certificationInr = a.import.certificationInr;
+    a.hybrid.finishingInr = Math.round(price * 0.04);
+    // only personalised products earn a price premium for local finishing
+    a.hybrid.finishPremiumPct = GIFT_META[r.name] && GIFT_META[r.name]!.pers !== "none" ? 12 : 0;
+    await db.insert(unitEconomicsScenarios).values({
+      userId,
+      trendId: r.id,
+      name: "Sample scenario",
+      isPrimary: true,
+      assumptions: a,
+      results: computeEconomics(a),
+      tableVersions: {},
+      isSample: true,
+    });
+  }
+}
+
 export async function seedSampleTrends(db: Db, opts: { reset?: boolean } = {}) {
   if (opts.reset) {
     await db.execute(
@@ -253,10 +409,12 @@ export async function runSeed() {
   const config = loadConfig();
   const { db, pool } = createDb(config.DATABASE_URL);
   await seedReference(db);
+  await seedEconomicsTables(db);
   await seedBacktest(db);
   await syncReleases(db);
-  await ensureAdmin(db, config.ADMIN_EMAIL, config.ADMIN_PASSWORD);
+  const admin = await ensureAdmin(db, config.ADMIN_EMAIL, config.ADMIN_PASSWORD);
   const n = await seedSampleTrends(db, { reset: process.env.RESEED_SAMPLE === "1" });
+  await seedSampleEconomics(db, admin.id);
   await pool.end();
   return n;
 }

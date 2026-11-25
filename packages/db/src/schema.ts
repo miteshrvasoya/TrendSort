@@ -251,17 +251,22 @@ export const productSnapshots = pgTable(
   (t) => [index("product_snapshots_p_idx").on(t.productId, t.fetchedAt)],
 );
 
-export const listingsIndia = pgTable("listings_india", {
-  id: serial("id").primaryKey(),
-  trendId: integer("trend_id").references(() => trendEntities.id),
-  marketplace: varchar("marketplace", { length: 40 }).notNull(),
-  title: text("title").notNull(),
-  priceInr: doublePrecision("price_inr"),
-  rating: doublePrecision("rating"),
-  reviewCount: integer("review_count"),
-  url: text("url"),
-  ...provenance,
-});
+export const listingsIndia = pgTable(
+  "listings_india",
+  {
+    id: serial("id").primaryKey(),
+    trendId: integer("trend_id").references(() => trendEntities.id),
+    marketplace: varchar("marketplace", { length: 40 }).notNull(),
+    title: text("title").notNull(),
+    priceInr: doublePrecision("price_inr"),
+    rating: doublePrecision("rating"),
+    reviewCount: integer("review_count"),
+    url: text("url"),
+    externalId: text("external_id"),
+    ...provenance,
+  },
+  (t) => [uniqueIndex("listings_india_mk_ext").on(t.marketplace, t.externalId)],
+);
 
 export const newsItems = pgTable(
   "news_items",
@@ -308,6 +313,9 @@ export const dutyGstTables = pgTable("duty_gst_tables", {
   id: serial("id").primaryKey(),
   version: integer("version").notNull().default(1),
   hsCode: varchar("hs_code", { length: 12 }).notNull(),
+  /** product group the calculator keys on (see dutyGroupFor); several HS codes may map to one group */
+  groupKey: varchar("group_key", { length: 40 }),
+  isIndicative: boolean("is_indicative").notNull().default(true),
   description: text("description"),
   basicDutyPct: doublePrecision("basic_duty_pct").notNull(),
   igstPct: doublePrecision("igst_pct").notNull(),
@@ -323,6 +331,7 @@ export const feeTables = pgTable("fee_tables", {
   category: text("category").notNull(),
   referralPct: doublePrecision("referral_pct").notNull(),
   closingFeeInr: doublePrecision("closing_fee_inr").notNull().default(0),
+  isIndicative: boolean("is_indicative").notNull().default(true),
   effectiveFrom: date("effective_from").notNull(),
 });
 
@@ -454,3 +463,49 @@ export const giftProfiles = pgTable("gift_profiles", {
   isSample: boolean("is_sample").notNull().default(false),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
+
+/** Saved unit-economics scenarios. One primary scenario per trend feeds scoring. */
+export const unitEconomicsScenarios = pgTable("unit_economics_scenarios", {
+  id: serial("id").primaryKey(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id),
+  trendId: integer("trend_id").references(() => trendEntities.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  isPrimary: boolean("is_primary").notNull().default(false),
+  assumptions: jsonb("assumptions").notNull(),
+  results: jsonb("results").notNull(),
+  tableVersions: jsonb("table_versions").notNull().default({}),
+  isSample: boolean("is_sample").notNull().default(false),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+/** India fit attributes the rule engine reads. Saved by you (or seeded for samples); never silently inferred into scores. */
+export const productFit = pgTable("product_fit", {
+  trendId: integer("trend_id")
+    .primaryKey()
+    .references(() => trendEntities.id, { onDelete: "cascade" }),
+  attrs: jsonb("attrs").notNull(),
+  isSample: boolean("is_sample").notNull().default(false),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+/** Reviews you import (CSV/JSON) from your own free tools. Not fetched automatically. */
+export const productReviews = pgTable(
+  "product_reviews",
+  {
+    id: serial("id").primaryKey(),
+    trendId: integer("trend_id")
+      .notNull()
+      .references(() => trendEntities.id, { onDelete: "cascade" }),
+    source: varchar("source", { length: 60 }).notNull(),
+    rating: doublePrecision("rating").notNull(),
+    reviewText: text("review_text").notNull(),
+    reviewedAt: date("reviewed_at"),
+    textHash: varchar("text_hash", { length: 40 }).notNull(),
+    importedAt: timestamp("imported_at", { withTimezone: true }).notNull().defaultNow(),
+    isSample: boolean("is_sample").notNull().default(false),
+  },
+  (t) => [uniqueIndex("product_reviews_uq").on(t.trendId, t.textHash)],
+);

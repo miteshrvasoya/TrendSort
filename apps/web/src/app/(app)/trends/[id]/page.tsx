@@ -6,11 +6,18 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { GiftProfileDialog } from "@/components/gift-profile-dialog";
+import {
+  EconomicsSummary,
+  FitPanel,
+  IndiaListingsPanel,
+  ReviewsPanel,
+} from "@/components/product-panels";
 import { ScoreExplain } from "@/components/score-explain";
 import { api, type NewsRow, type ProductRow, type ScoreDetail } from "@/lib/api";
 import { STAGE_LABEL, fmtScore } from "@/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
+import { lagGroupFor } from "@trendbridge/shared";
 import { useMemo, useState } from "react";
 import {
   CartesianGrid,
@@ -323,6 +330,18 @@ export default function TrendDetail() {
         </p>
       </Card>
 
+      {d && (
+        <>
+          <EconomicsSummary
+            trendId={d.id}
+            isSample={d.isSample}
+            group={lagGroupFor(d.category, d.name)}
+          />
+          <IndiaListingsPanel trendId={d.id} />
+          <FitPanel trendId={d.id} isSample={d.isSample} />
+          <ReviewsPanel trendId={d.id} />
+        </>
+      )}
       <Card>
         <h2 className="mb-2 font-semibold">News timeline</h2>
         <NewsList items={news.data ?? []} empty="No headlines matched this trend yet." />

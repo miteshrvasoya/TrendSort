@@ -42,7 +42,12 @@ const optNum = z.preprocess(
   z.coerce.number().finite().nullable(),
 );
 
-export const IMPORT_KINDS = ["marketplace_products", "timeseries"] as const;
+export const IMPORT_KINDS = [
+  "marketplace_products",
+  "timeseries",
+  "reviews",
+  "india_listings",
+] as const;
 export const importKind = z.enum(IMPORT_KINDS);
 export type ImportKind = z.infer<typeof importKind>;
 
@@ -69,9 +74,28 @@ export const timeseriesRowSchema = z.object({
   week_start: dateStr,
   value: numCell,
 });
+export const reviewRowSchema = z.object({
+  trend: z.string().min(2), // trend name or slug
+  source: z.string().min(2).default("manual"),
+  rating: z.coerce.number().min(1).max(5),
+  text: z.string().min(5).max(2000),
+  date: dateStr.optional().or(z.literal("")),
+});
+export const indiaListingRowSchema = z.object({
+  marketplace: z.string().min(2), // amazon_in, flipkart, meesho ...
+  external_id: z.string().min(1),
+  title: z.string().min(3),
+  price_inr: optNum.default(null),
+  rating: optNum.default(null),
+  review_count: optNum.default(null),
+  url: z.string().url().optional().or(z.literal("")),
+  trend: z.string().optional(), // optional explicit trend name/slug; otherwise matched by title
+});
 export const IMPORT_SCHEMAS = {
   marketplace_products: marketplaceRowSchema,
   timeseries: timeseriesRowSchema,
+  reviews: reviewRowSchema,
+  india_listings: indiaListingRowSchema,
 } as const;
 
 export const importRequestSchema = z.object({
@@ -83,6 +107,16 @@ export const importRequestSchema = z.object({
 export type ImportRequest = z.infer<typeof importRequestSchema>;
 
 export const IMPORT_TEMPLATES: Record<ImportKind, { csv: string; description: string }> = {
+  reviews: {
+    description:
+      "One row per review from a free browser export. Review text is kept only for theme counting and short example snippets.",
+    csv: "trend,source,rating,text,date\nPersonalised star map,amazon_us,5,Sturdy frame and the print looks great. Perfect gift.,2026-11-01\n",
+  },
+  india_listings: {
+    description:
+      "Indian marketplace listings (Amazon.in, Flipkart, Meesho...) you found for a product. Matched to a trend by title unless 'trend' is given.",
+    csv: "marketplace,external_id,title,price_inr,rating,review_count,url,trend\namazon_in,B0INEXAMPLE1,Personalised Star Map Night Sky Frame,1299,4.3,412,https://www.amazon.in/dp/B0INEXAMPLE1,Personalised star map\n",
+  },
   marketplace_products: {
     description:
       "One row per product per list snapshot. Export from a free browser tool or type by hand.",
@@ -96,4 +130,6 @@ export const IMPORT_TEMPLATES: Record<ImportKind, { csv: string; description: st
 };
 
 export type MarketplaceRow = z.output<typeof marketplaceRowSchema>;
+export type ReviewRow = z.output<typeof reviewRowSchema>;
+export type IndiaListingRow = z.output<typeof indiaListingRowSchema>;
 export type TimeseriesRow = z.output<typeof timeseriesRowSchema>;

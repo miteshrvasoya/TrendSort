@@ -6,7 +6,7 @@ import { api } from "@/lib/api";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
-type Kind = "marketplace_products" | "timeseries";
+type Kind = "marketplace_products" | "timeseries" | "reviews" | "india_listings";
 interface Validation {
   total: number;
   valid: number;
@@ -77,6 +77,8 @@ export default function ImportPage() {
             >
               <option value="timeseries">Weekly time series</option>
               <option value="marketplace_products">Marketplace products</option>
+              <option value="reviews">Reviews</option>
+              <option value="india_listings">India listings</option>
             </select>
           </label>
           <label>
