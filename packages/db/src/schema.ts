@@ -413,3 +413,21 @@ export const tourSteps = pgTable(
 
 // helper for raw SQL elsewhere
 export { sql };
+
+export const backtestCases = pgTable(
+  "backtest_cases",
+  {
+    id: serial("id").primaryKey(),
+    name: text("name").notNull(),
+    term: text("term").notNull(),
+    group: varchar("lag_group", { length: 30 }).notNull(),
+    usRise: varchar("us_rise", { length: 7 }).notNull(),
+    inRise: varchar("in_rise", { length: 7 }).notNull(),
+    estimatedLagMonths: doublePrecision("estimated_lag_months").notNull(),
+    measuredLagMonths: doublePrecision("measured_lag_months"),
+    measuredCorrelation: doublePrecision("measured_correlation"),
+    measuredAt: timestamp("measured_at", { withTimezone: true }),
+    note: text("note"),
+  },
+  (t) => [uniqueIndex("backtest_term_uq").on(t.term)],
+);

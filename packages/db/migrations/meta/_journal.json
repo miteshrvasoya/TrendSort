@@ -15,6 +15,13 @@
       "when": 1795574152989,
       "tag": "0001_confused_silver_fox",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795575524070,
+      "tag": "0002_gorgeous_jean_grey",
+      "breakpoints": true
     }
   ]
 }

@@ -7,13 +7,17 @@ def _diff_z(x: np.ndarray) -> np.ndarray:
     return (d - d.mean()) / sd if sd > 0 else d * 0
 
 
-def lead_lag(foreign: list[float], india: list[float], max_lag: int = 52) -> dict:
+def lead_lag(foreign: list[float], india: list[float], max_lag: int = 52, smooth: int = 1) -> dict:
     """Cross-correlate differenced series. Positive lag = India follows foreign by `lag` periods.
 
     Returns the best lag, its correlation and an honest `usable` flag (corr >= 0.4).
     """
-    f = _diff_z(np.asarray(foreign, dtype=float))
-    i = _diff_z(np.asarray(india, dtype=float))
+    fa, ia = np.asarray(foreign, dtype=float), np.asarray(india, dtype=float)
+    if smooth > 1:
+        k = np.ones(smooth) / smooth
+        fa, ia = np.convolve(fa, k, mode="valid"), np.convolve(ia, k, mode="valid")
+    f = _diff_z(fa)
+    i = _diff_z(ia)
     n = min(len(f), len(i))
     f, i = f[:n], i[:n]
     best_lag, best_corr = 0, -2.0

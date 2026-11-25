@@ -22,7 +22,10 @@ describe("versioning", () => {
   });
   it("returning users only see new steps", () => {
     expect(stepsFor({ sinceVersion: CURRENT_VERSION })).toHaveLength(0);
-    expect(stepsFor({ sinceVersion: "0.1.0" }).every((s) => s.version === CURRENT_VERSION)).toBe(
+    expect(
+      stepsFor({ sinceVersion: "0.1.0" }).every((s) => compareVersions(s.version, "0.1.0") > 0),
+    ).toBe(true);
+    expect(stepsFor({ sinceVersion: "0.2.0" }).every((s) => s.version === CURRENT_VERSION)).toBe(
       true,
     );
     expect(stepsFor({ sinceVersion: null }).length).toBe(TOUR_STEPS.length);

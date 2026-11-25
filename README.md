@@ -1,6 +1,6 @@
 # TrendBridge
 
-Finds products trending abroad before they peak in India, scores India-readiness, and compares import vs Indian-manufacture economics. Free data only (Rs 0). Current version: **0.2.0 (Phase 1: Signals MVP)**. See `docs/PROPOSAL.md` for the full design.
+Finds products trending abroad before they peak in India, scores India-readiness, and compares import vs Indian-manufacture economics. Free data only (Rs 0). Current version: **0.3.0 (Phase 2: Scoring and India lag model)**. See `docs/PROPOSAL.md` for the full design.
 
 ## Run locally (about 10 minutes)
 
@@ -28,6 +28,14 @@ Fetch a live free source once, without the queue: `pnpm --filter @trendbridge/wo
 4. Google Trends is an unofficial API and may rate-limit (429); the circuit breaker pauses it for 30 minutes after 3 failures.
 
 Run one connector without the queue: `pnpm --filter @trendbridge/workers run-once google_news_rss`. Set `LIVE_FETCH_ENABLED=false` for fixture mode.
+
+## Scoring (Phase 2)
+
+Scores need the Python analytics service: `docker compose up -d analytics` (or `cd services/analytics && pip install -r requirements.txt && uvicorn app.main:app --port 8000`). Then **Trend Explorer → Re-score all**, or `pnpm --filter @trendbridge/workers score-now`. Scoring also runs daily at 04:30 when the workers process is up. Methodology: `docs/SCORING.md`.
+
+Replace the analyst-estimated back-test lags with measured ones (needs internet, uses Google Trends gently, ~30 requests): `pnpm --filter @trendbridge/workers measure-lag`.
+
+Reset sample data after a generator change: `RESEED_SAMPLE=1 pnpm db:seed`.
 
 ## Test
 

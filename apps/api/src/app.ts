@@ -16,6 +16,7 @@ import type { Config } from "./config";
 import { authRoutes } from "./routes/auth";
 import { versionRoutes } from "./routes/versions";
 import { importRoutes } from "./routes/import";
+import { scoringRoutes } from "./routes/scoring";
 import { sourceRoutes } from "./routes/sources";
 import { trendRoutes } from "./routes/trends";
 
@@ -65,6 +66,7 @@ export async function buildApp(opts: { db: Db; config: Config; logger?: boolean 
   await app.register(versionRoutes);
   await app.register(sourceRoutes);
   await app.register(importRoutes);
+  await app.register(scoringRoutes);
   await app.register(trendRoutes);
   return app;
 }

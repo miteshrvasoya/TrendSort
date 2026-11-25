@@ -14,6 +14,31 @@ export interface ReleaseNote {
 
 export const RELEASES: ReleaseNote[] = [
   {
+    version: "0.3.0",
+    date: "2026-11-26",
+    title: "Scoring and the India lag model",
+    summary:
+      "Every trend now gets Momentum, Breadth, Sustainability, Commercial proof, an India adoption stage and an India Opportunity score, each explainable, with confidence and weights you control.",
+    added: [
+      "Scores computed by the Python analytics service: seasonality-adjusted momentum, sustainability (fad vs steady), breadth, marketplace-based commercial proof",
+      "India adoption stage (Not visible to Saturated) from India's search interest relative to the foreign peak",
+      "India lag model: category lag from a 30-case back-test (analyst estimates, clearly labelled) with an 80% interval, plus a measure-lag job that replaces estimates with Google Trends measurements",
+      "Scoring page: eight weight sliders, plain-language methodology, back-test table",
+      "'Why this score' panel on every trend: inputs, weights, contributions, coverage, confidence breakdown and score history",
+      "Confidence badges and hover explanations on every score column",
+      "Re-score button and a daily scoring job",
+    ],
+    changed: [
+      "Google Trends is now fetched as one compare request per keyword, so all countries share one scale and India vs foreign is directly comparable",
+      "Placeholder sample scores are gone; sample trends are scored by the real model and stay labelled Sample",
+      "Opportunity ignores inputs that have no data yet instead of guessing, and says how much of the weight it is based on",
+    ],
+    fixed: [],
+    removed: ["Placeholder 'sample-0' scores"],
+    forYou:
+      "You can now rank trends by how early India is, see exactly why each score is what it is, and tune the weights to your own priorities. Margin, price fit, regulation and logistics join the score in v0.5; until then Opportunity covers only the demand and timing side, and says so. Back-test lags are my estimates until you run the measure-lag job.",
+  },
+  {
     version: "0.2.0",
     date: "2026-11-25",
     title: "Signals MVP",

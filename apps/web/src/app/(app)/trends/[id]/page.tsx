@@ -5,7 +5,8 @@ import { StaleWarning } from "@/components/stale-warning";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { api, type NewsRow, type ProductRow } from "@/lib/api";
+import { ScoreExplain } from "@/components/score-explain";
+import { api, type NewsRow, type ProductRow, type ScoreDetail } from "@/lib/api";
 import { STAGE_LABEL, fmtScore } from "@/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
@@ -66,6 +67,10 @@ export default function TrendDetail() {
   const prods = useQuery({
     queryKey: ["trend-products", id],
     queryFn: () => api<ProductRow[]>(`/trends/${id}/products`),
+  });
+  const score = useQuery({
+    queryKey: ["trend-score", id],
+    queryFn: () => api<ScoreDetail>(`/trends/${id}/score`),
   });
   const [off, setOff] = useState<string[]>([]);
 
@@ -146,12 +151,24 @@ export default function TrendDetail() {
               Keywords: {d.keywords.map((k) => k.term).join(", ")}
             </span>
           )}
-          {sample && (
-            <span title={`Algorithm: ${d.score?.algorithmVersion}`}>
-              Opportunity (placeholder): <strong>{fmtScore(d.score?.opportunity)}</strong>
+          {score.data?.scored && (
+            <span>
+              Opportunity <strong>{fmtScore(score.data.opportunity)}</strong>
             </span>
           )}
         </div>
+      )}
+      {score.data?.scored ? (
+        <ScoreExplain d={score.data} />
+      ) : (
+        score.data && (
+          <Card>
+            <p className="text-sm text-muted-foreground">
+              Not scored yet. Scoring needs at least 26 weeks of search interest; click “Re-score
+              all” on the Trend Explorer once data has arrived.
+            </p>
+          </Card>
+        )
       )}
       <Card>
         <div className="mb-2 flex flex-wrap items-center justify-between gap-2">

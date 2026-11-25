@@ -1,10 +1,10 @@
 import {
+  backtestCases,
   categories,
   countries,
   createDb,
   festivals,
   occasions,
-  scores,
   sources,
   trendEntities,
   trendSignalsTimeseries,
@@ -12,7 +12,7 @@ import {
   verticals,
   type Db,
 } from "@trendbridge/db";
-import { COUNTRIES, FESTIVALS, SOURCE_CATALOG, VERTICALS } from "@trendbridge/shared";
+import { BACKTEST, COUNTRIES, FESTIVALS, SOURCE_CATALOG, VERTICALS } from "@trendbridge/shared";
 import bcrypt from "bcryptjs";
 import { eq, sql } from "drizzle-orm";
 import { loadConfig } from "../config";
@@ -114,7 +114,46 @@ export async function seedReference(db: Db) {
   }
 }
 
-export async function seedSampleTrends(db: Db) {
+const monthsBetween = (a: string, b: string) =>
+  (Number(b.slice(0, 4)) - Number(a.slice(0, 4))) * 12 +
+  (Number(b.slice(5, 7)) - Number(a.slice(5, 7)));
+
+/** Analyst-estimated back-test cases. Never overwrites a measured lag. */
+export async function seedBacktest(db: Db) {
+  for (const c of BACKTEST.cases) {
+    await db
+      .insert(backtestCases)
+      .values({
+        name: c.name,
+        term: c.term,
+        group: c.group,
+        usRise: c.usRise,
+        inRise: c.inRise,
+        estimatedLagMonths: monthsBetween(c.usRise, c.inRise),
+        note: "analyst estimate; verify",
+      })
+      .onConflictDoUpdate({
+        target: backtestCases.term,
+        set: {
+          name: c.name,
+          group: c.group,
+          usRise: c.usRise,
+          inRise: c.inRise,
+          estimatedLagMonths: monthsBetween(c.usRise, c.inRise),
+        },
+      });
+  }
+  // Phase 0/1 placeholder scores are gone: real scores come from the scoring job.
+  await db.execute(sql`delete from scores where algorithm_version = 'sample-0'`);
+}
+
+export async function seedSampleTrends(db: Db, opts: { reset?: boolean } = {}) {
+  if (opts.reset) {
+    await db.execute(
+      sql`delete from scores where trend_id in (select id from trend_entities where is_sample)`,
+    );
+    await db.execute(sql`delete from trend_entities where is_sample`);
+  }
   const cnt = (await db.execute(sql`select count(*)::int as n from trend_entities where is_sample`))
     .rows[0] as { n: number } | undefined;
   if ((cnt?.n ?? 0) > 0) return 0;
@@ -168,28 +207,6 @@ export async function seedSampleTrends(db: Db) {
         .insert(trendSignalsTimeseries)
         .values(rows.slice(i, i + 500))
         .onConflictDoNothing();
-
-    const last = us.slice(-12),
-      prev = us.slice(-24, -12);
-    const avg = (a: number[]) => a.reduce((x, y) => x + y, 0) / a.length;
-    const growth = (avg(last) - avg(prev)) / Math.max(avg(prev), 1);
-    // Placeholder values so the UI has something to show; real scoring ships in Phase 2.
-    const momentum = Math.round(Math.max(0, Math.min(100, 50 + growth * 80)));
-    await db.insert(scores).values({
-      trendId: row!.id,
-      algorithmVersion: "sample-0",
-      momentum,
-      breadth: Math.round(40 + rnd() * 50),
-      sustainability: Math.round(35 + rnd() * 55),
-      commercialProof: Math.round(30 + rnd() * 60),
-      opportunity: Math.round(30 + momentum * 0.4 + rnd() * 25),
-      adoptionStage: t.stage,
-      lagMonths: Math.round((t.lagWeeks / 4.345) * 10) / 10,
-      weights: {},
-      inputs: { note: "Placeholder sample score; not computed by the real model" },
-      confidence: 0.2,
-      isSample: true,
-    });
   }
   return SEED_TRENDS.length;
 }
@@ -198,9 +215,10 @@ export async function runSeed() {
   const config = loadConfig();
   const { db, pool } = createDb(config.DATABASE_URL);
   await seedReference(db);
+  await seedBacktest(db);
   await syncReleases(db);
   await ensureAdmin(db, config.ADMIN_EMAIL, config.ADMIN_PASSWORD);
-  const n = await seedSampleTrends(db);
+  const n = await seedSampleTrends(db, { reset: process.env.RESEED_SAMPLE === "1" });
   await pool.end();
   return n;
 }

@@ -100,6 +100,33 @@ export const TOUR_STEPS: TourStepDef[] = [
     order: 10,
     route: "/import",
   },
+  {
+    version: "0.3.0",
+    featureKey: "score-legend",
+    target: "[data-tour='score-legend']",
+    title: "Scores, explained",
+    body: "Hover any score column header for its meaning. A dash means not enough data yet, never zero. Open a trend to see 'Why this score'.",
+    order: 11,
+    route: "/trends",
+  },
+  {
+    version: "0.3.0",
+    featureKey: "weight-sliders",
+    target: "[data-tour='weight-sliders']",
+    title: "Your weights",
+    body: "Decide what matters: foreign momentum, lag window left, competition gap and more. Opportunity scores update everywhere.",
+    order: 12,
+    route: "/scoring",
+  },
+  {
+    version: "0.3.0",
+    featureKey: "backtest",
+    target: "[data-tour='backtest']",
+    title: "India lag back-test",
+    body: "Past trends and how long India took to catch up. These are labelled estimates until you run measure-lag with internet access.",
+    order: 13,
+    route: "/scoring",
+  },
 ];
 
 export function stepsFor(opts: { sinceVersion?: string | null; all?: boolean }): TourStepDef[] {

@@ -55,17 +55,27 @@ export function foreignCurve(
   return out.map((v) => Math.round(Math.max(0, Math.min(100, (v / max) * 100)) * 10) / 10);
 }
 
-/** India = lagged, damped copy of the foreign curve. */
+/**
+ * India = lagged copy of the foreign curve, scaled so that at the END of the series it sits at `targetRatio`
+ * of the foreign peak (so the generator and the stage bands in stageFromRatio agree).
+ */
 export function indiaCurve(
   foreign: number[],
   lagWeeks: number,
-  damp: number,
+  targetRatio: number,
   rnd: () => number,
 ): number[] {
+  const n = foreign.length;
+  const peak = Math.max(...foreign, 1);
+  const srcEnd = Math.max(foreign[Math.max(0, n - 1 - lagWeeks)] ?? 1, 1);
+  const k = (targetRatio * peak) / srcEnd;
   return foreign.map((_, i) => {
     const src = foreign[i - lagWeeks];
-    const v = src === undefined ? 1 + rnd() * 2 : src * damp + (rnd() - 0.5) * 4;
-    return Math.round(Math.max(0, Math.min(100, v)) * 10) / 10;
+    const v =
+      src === undefined
+        ? 0.3 + rnd() * 0.5
+        : src * k + (rnd() - 0.5) * Math.max(1, targetRatio * peak * 0.08);
+    return Math.round(Math.max(0, Math.min(130, v)) * 10) / 10;
   });
 }
 
@@ -81,11 +91,12 @@ export function weekStarts(weeks: number, end = new Date()): string[] {
   return out;
 }
 
+/** India level as a share of the foreign curve, set to the middle of each adoption-stage band (see stageFromRatio). */
 export const STAGE_DAMP: Record<string, number> = {
-  not_yet_visible: 0.03,
-  early_signal: 0.15,
-  emerging: 0.4,
-  growing: 0.7,
-  mainstream: 0.95,
-  saturated: 1,
+  not_yet_visible: 0.01,
+  early_signal: 0.05,
+  emerging: 0.15,
+  growing: 0.4,
+  mainstream: 0.8,
+  saturated: 1.15,
 };

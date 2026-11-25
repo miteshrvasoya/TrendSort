@@ -9,7 +9,7 @@ export function SampleBanner() {
       <FlaskConical size={16} />
       <span>
         <strong>Sample data.</strong> Trends, series and scores below are synthetic demo values, not
-        market truth. Real signals arrive from Phase 1.
+        market truth. Track a trend and run sources to see real signals.
       </span>
     </div>
   );

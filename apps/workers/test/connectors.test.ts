@@ -185,19 +185,24 @@ describe("connectors end-to-end on fixtures", () => {
     expect(unlinked!.trendId).toBeNull();
   });
 
-  it("google trends: client injected, upserts weekly series and is idempotent", async () => {
+  it("google trends: one joint-compare call per keyword, upserts weekly series idempotently", async () => {
     const calls: string[] = [];
-    const c = makeGoogleTrends(async (term, geo) => {
-      calls.push(`${term}|${geo}`);
-      return [
-        { time: 1730000000, value: geo === "US" ? 80 : 5 },
-        { time: 1730604800, value: geo === "US" ? 100 : 9 },
-      ];
+    const c = makeGoogleTrends(async (term, geos) => {
+      calls.push(`${term}|${geos.join(",")}`);
+      return Object.fromEntries(
+        geos.map((g) => [
+          g,
+          [
+            { time: 1730000000, value: g === "US" ? 80 : 5 },
+            { time: 1730604800, value: g === "US" ? 100 : 9 },
+          ],
+        ]),
+      );
     }, 0);
     expect(
       (await runConnector(db, c as unknown as Connector, { ...env, liveFetch: true })).status,
     ).toBe("ok");
-    expect(calls).toEqual(["personalised star map|US", "personalised star map|IN"]);
+    expect(calls).toEqual(["personalised star map|US,IN"]);
     await db
       .update(trackedKeywords)
       .set({ lastFetchedAt: null })
@@ -208,7 +213,11 @@ describe("connectors end-to-end on fixtures", () => {
       .from(trendSignalsTimeseries)
       .where(eq(trendSignalsTimeseries.trendId, trendId));
     expect(rows).toHaveLength(4);
-    expect(rows.every((r) => !r.isSample && r.metric === "search_interest")).toBe(true);
+    expect(
+      rows.every(
+        (r) => !r.isSample && r.metric === "search_interest" && r.method?.includes("joint compare"),
+      ),
+    ).toBe(true);
   });
 
   it("google trends 429 surfaces as an error run (circuit breaker input)", async () => {

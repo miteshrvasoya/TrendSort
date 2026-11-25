@@ -60,7 +60,7 @@ export default function Dashboard() {
               </Link>
               <span className="flex items-center gap-2 text-sm">
                 <Badge>{STAGE_LABEL[t.adoptionStage ?? ""] ?? "–"}</Badge>
-                <span title="Placeholder sample score">{fmtScore(t.opportunity)}</span>
+                <span title="India Opportunity score">{fmtScore(t.opportunity)}</span>
               </span>
             </li>
           ))}

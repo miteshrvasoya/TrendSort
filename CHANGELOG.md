@@ -2,6 +2,28 @@
 
 All notable changes. Format: [Semantic Versioning](https://semver.org). Release notes also live in the app (What's New) and the `app_versions` / `release_notes` tables; the source of truth is `packages/shared/src/releases.ts`.
 
+## 0.3.0 — 2026-11-26 — Scoring and the India lag model
+
+**What this means for you:** you can rank trends by how early India is, see exactly why each score is what it is, and tune the weights. Margin, price fit, regulation and logistics join Opportunity in v0.5; until then it covers demand and timing only, and says so. Back-test lags are estimates until you run `measure-lag`.
+
+### Added
+
+- Python analytics: seasonality-adjusted momentum, sustainability, breadth inputs, India ratio and early-signal date, lead-lag, back-test category lag with bootstrap interval
+- Adoption stage, India Opportunity (eight weighted inputs), confidence, per-day score history
+- "Why this score" panel, Scoring page (weight sliders, methodology, back-test table), confidence badges and header tooltips
+- 30-case back-test dataset (analyst estimates) and `measure-lag` job; `score-now` command; daily scoring job; Re-score button
+- `docs/SCORING.md`
+
+### Changed
+
+- Google Trends fetched as one compare request per keyword (one shared scale across countries)
+- Opportunity excludes unavailable inputs instead of guessing and reports its coverage
+- Sample trends are scored by the real model (still labelled Sample)
+
+### Removed
+
+- Placeholder `sample-0` scores
+
 ## 0.2.0 — 2026-11-25 — Signals MVP
 
 **What this means for you:** you can add the products and ideas you care about and watch real search interest and news for them. Google Trends values are relative within each country, so compare shapes, not magnitudes. Scores are still placeholders until Phase 2.

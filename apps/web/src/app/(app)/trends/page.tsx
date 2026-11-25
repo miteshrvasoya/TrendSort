@@ -5,8 +5,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { api, type TrendRow } from "@/lib/api";
+import { SCORE_HELP } from "@/lib/scores";
 import { STAGE_LABEL, fmtScore } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
+import { ConfidenceBadge } from "@/components/confidence-badge";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   createColumnHelper,
   flexRender,
@@ -42,6 +44,18 @@ export default function TrendsPage() {
   const [data, setData] = useState<(typeof DATA)[number][0]>("all");
   const [q, setQ] = useState("");
   const [open, setOpen] = useState(false);
+  const [note, setNote] = useState<string | null>(null);
+  const scoring = useMutation({
+    mutationFn: () => api("/scores/run", { method: "POST", json: {} }),
+    onSuccess: () => {
+      setNote(
+        "Scoring queued. Needs the workers process and the analytics service; refresh in a minute.",
+      );
+      setTimeout(() => qc.invalidateQueries({ queryKey: ["trends"] }), 15000);
+    },
+    onError: (e) => setNote((e as Error).message),
+  });
+  const qc = useQueryClient();
   const [sorting, setSorting] = useState<SortingState>([{ id: "opportunity", desc: true }]);
   const params = `limit=200${vertical ? `&vertical=${vertical}` : ""}${q ? `&q=${encodeURIComponent(q)}` : ""}${data === "candidate" ? "&status=candidate" : data !== "all" ? `&data=${data}` : ""}`;
   const query = useQuery({
@@ -51,10 +65,11 @@ export default function TrendsPage() {
   const num = (
     label: string,
     key: "momentum" | "breadth" | "sustainability" | "commercialProof" | "opportunity",
+    help: string,
   ) =>
     col.accessor((r) => r[key], {
       id: key,
-      header: label,
+      header: () => <span title={help}>{label}</span>,
       cell: (c) => fmtScore(c.getValue()),
       sortUndefined: "last" as const,
     });
@@ -70,11 +85,35 @@ export default function TrendsPage() {
       }),
       col.accessor("category", { header: "Category" }),
       col.accessor("adoptionStage", {
-        header: "India stage",
-        cell: (c) => <Badge>{STAGE_LABEL[c.getValue() ?? ""] ?? "–"}</Badge>,
+        header: () => <span title={SCORE_HELP.stage}>India stage</span>,
+        cell: (c) =>
+          c.getValue() ? (
+            <Badge>{STAGE_LABEL[c.getValue() ?? ""]}</Badge>
+          ) : (
+            <span className="text-muted-foreground">–</span>
+          ),
       }),
-      num("Momentum", "momentum"),
-      num("Opportunity", "opportunity"),
+      num("Momentum", "momentum", SCORE_HELP.momentum),
+      num("Breadth", "breadth", SCORE_HELP.breadth),
+      num("Sustain.", "sustainability", SCORE_HELP.sustainability),
+      num("Proof", "commercialProof", SCORE_HELP.proof),
+      num("Opportunity", "opportunity", SCORE_HELP.opportunity),
+      col.accessor("lagMonths", {
+        header: () => <span title={SCORE_HELP.lag}>Lag (mo)</span>,
+        cell: (c) => c.getValue() ?? "–",
+      }),
+      col.display({
+        id: "conf",
+        header: () => <span title={SCORE_HELP.confidence}>Confidence</span>,
+        cell: (c) => {
+          const r = c.row.original;
+          return r.confidenceLevel ? (
+            <ConfidenceBadge level={r.isSample ? "sample" : r.confidenceLevel} />
+          ) : (
+            <span className="text-muted-foreground">–</span>
+          );
+        },
+      }),
       col.accessor("newsCount", { header: "News" }),
       col.accessor("productCount", { header: "Products" }),
       col.accessor("lastSignalAt", {
@@ -112,9 +151,14 @@ export default function TrendsPage() {
     <>
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h1 className="text-2xl font-bold">Trend Explorer</h1>
-        <Button data-tour="track-trend" onClick={() => setOpen(true)}>
-          <Plus size={16} /> Track a trend
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" disabled={scoring.isPending} onClick={() => scoring.mutate()}>
+            {scoring.isPending ? "Queuing…" : "Re-score all"}
+          </Button>
+          <Button data-tour="track-trend" onClick={() => setOpen(true)}>
+            <Plus size={16} /> Track a trend
+          </Button>
+        </div>
       </div>
       {data !== "real" && data !== "candidate" && <SampleBanner />}
       <div className="flex flex-wrap items-center gap-2">
@@ -192,9 +236,18 @@ export default function TrendsPage() {
           </p>
         )}
       </Card>
-      <p className="text-xs text-muted-foreground">
-        Momentum and Opportunity are placeholders on sample data and blank for live trends until the
-        Phase 2 scoring model ships.
+      {note && (
+        <p role="status" className="rounded-lg bg-muted p-2 text-sm">
+          {note}
+        </p>
+      )}
+      <p data-tour="score-legend" className="text-xs text-muted-foreground">
+        Hover a column header for what it means. A dash means “not enough data yet”, never zero.
+        Opportunity uses{" "}
+        <Link className="underline" href="/scoring">
+          your weights
+        </Link>
+        ; open a trend to see every input behind its score.
       </p>
       <TrackTrendDialog open={open} onOpenChange={setOpen} />
     </>

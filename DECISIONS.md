@@ -15,3 +15,8 @@
 13. **Sample entities are excluded from live matching** so synthetic and real data never mix.
 14. **Fixtures are hand-written approximations** of feed/page formats (the build sandbox blocked all external hosts), not recordings. First live runs may need parser adjustments; failures surface as run errors, not fake data.
 15. **API enqueues runs via BullMQ** (Redis) rather than running connectors in-process, so "Run now" uses the same retry, DLQ and rate-limit path as scheduled jobs.
+16. **Maths in Python, combination in TypeScript.** Python returns trend maths (momentum, sustainability, ratio, lag). Weighting, opportunity, stage and confidence are pure TS in `packages/shared`, so changing weights re-evaluates instantly from stored components without recomputing series.
+17. **Missing inputs are excluded, never zero or neutral.** Opportunity reports its coverage; confidence includes it. Before v0.5 it therefore reflects demand and timing only.
+18. **Google Trends compare requests** (one per keyword, all geos) so India and foreign share one scale; non-comparable series withhold stage, competition gap and lag window.
+19. **Lead-lag uses smoothed raw series, not STL output** (STL edge effects distorted cross-correlation in tests). A trend's own lead-lag is displayed only if correlation >= 0.4 and never feeds the score; the category lag from the back-test does.
+20. **Back-test dates are analyst estimates** from general knowledge, labelled as such everywhere, replaced per case by measurement when `measure-lag` finds a usable (>= 0.4) correlation.

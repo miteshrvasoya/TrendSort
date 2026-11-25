@@ -6,15 +6,14 @@ import type { Connector, FetchContext } from "../framework/types";
 import fixture from "../fixtures/google-trends.json";
 
 export interface InterestPoint {
-  time: number;
-  value: number;
-} // unix seconds, 0-100
+  time: number; // unix seconds
+  value: number; // 0-100, normalised jointly across all geos in the request
+}
 export interface Raw {
   trendId: number;
   keywordId: number;
   term: string;
-  geo: string;
-  points: InterestPoint[];
+  series: Record<string, InterestPoint[]>;
 }
 export interface Point {
   trendId: number;
@@ -23,23 +22,38 @@ export interface Point {
   value: number;
 }
 
-/** Injectable so tests never hit the network. The default wraps the unofficial `google-trends-api` package. */
-export type InterestClient = (term: string, geo: string, start: Date) => Promise<InterestPoint[]>;
+/**
+ * One request per keyword compares all its geos, so values share ONE scale (the single highest point across
+ * all geos is 100). That is what makes India vs foreign directly comparable. Injectable so tests never hit the network.
+ */
+export type InterestClient = (
+  term: string,
+  geos: string[],
+  start: Date,
+) => Promise<Record<string, InterestPoint[]>>;
 
-const MAX_KEYWORDS_PER_RUN = 8; // x geos (2 by default) = 16 calls; budget 200/day
+export const METHOD = "google_trends joint compare (one scale across countries)";
+const MAX_KEYWORDS_PER_RUN = 8; // 1 call per keyword; budget 200/day
 
-export const defaultClient: InterestClient = async (term, geo, start) => {
+export const defaultClient: InterestClient = async (term, geos, start) => {
   const { default: api } = await import("google-trends-api");
   const json = await api.interestOverTime({
-    keyword: term,
-    geo,
+    keyword: geos.map(() => term) as unknown as string,
+    geo: geos as unknown as string,
     startTime: start,
     granularTimeResolution: false,
   });
   const data = JSON.parse(json) as {
     default: { timelineData: { time: string; value: number[] }[] };
   };
-  return data.default.timelineData.map((p) => ({ time: Number(p.time), value: p.value[0] ?? 0 }));
+  const out: Record<string, InterestPoint[]> = {};
+  geos.forEach((g, i) => {
+    out[g] = data.default.timelineData.map((p) => ({
+      time: Number(p.time),
+      value: p.value[i] ?? 0,
+    }));
+  });
+  return out;
 };
 
 const monday = (unix: number) => {
@@ -61,34 +75,33 @@ export function makeGoogleTrends(
     reliabilityScore: 0.6,
     scraped: false,
     termsNote:
-      "Unofficial wrapper. Values are relative (0-100) within each country request, so US and India curves are NOT directly comparable in magnitude.",
+      "Unofficial wrapper. One compare request per keyword, so all countries share one 0-100 scale.",
 
     async fetch(ctx: FetchContext) {
       if (ctx.fixtureMode) return fixture as Raw[];
       const kws = await activeKeywords(ctx.db, MAX_KEYWORDS_PER_RUN);
       const start = new Date(Date.now() - 5 * 365 * 86_400_000);
       const out: Raw[] = [];
-      for (const k of kws)
-        for (const geo of k.geos) {
-          await ctx.http.recordExternal(
-            `google-trends://interestOverTime?q=${encodeURIComponent(k.term)}&geo=${geo}`,
-          );
-          try {
-            out.push({
-              trendId: k.trendId,
-              keywordId: k.id,
-              term: k.term,
-              geo,
-              points: await client(k.term, geo, start),
-            });
-          } catch (e) {
-            const msg = e instanceof Error ? e.message : String(e);
-            if (out.length === 0 && /429|too many|quota/i.test(msg))
-              throw new Error(`Google Trends rate-limited (429); backing off. ${msg}`);
-            ctx.log.warn({ term: k.term, geo, msg }, "trends call failed");
-          }
-          await new Promise((r) => setTimeout(r, pauseMs));
+      for (const k of kws) {
+        const geos = [...new Set(k.geos)].slice(0, 5);
+        await ctx.http.recordExternal(
+          `google-trends://interestOverTime?q=${encodeURIComponent(k.term)}&geo=${geos.join(",")}`,
+        );
+        try {
+          out.push({
+            trendId: k.trendId,
+            keywordId: k.id,
+            term: k.term,
+            series: await client(k.term, geos, start),
+          });
+        } catch (e) {
+          const msg = e instanceof Error ? e.message : String(e);
+          if (out.length === 0 && /429|too many|quota/i.test(msg))
+            throw new Error(`Google Trends rate-limited (429); backing off. ${msg}`);
+          ctx.log.warn({ term: k.term, msg }, "trends call failed");
         }
+        await new Promise((r) => setTimeout(r, pauseMs));
+      }
       if (kws.length && out.length === 0)
         throw new Error("Google Trends returned no data for any keyword");
       return out;
@@ -96,12 +109,9 @@ export function makeGoogleTrends(
 
     normalize: (raw) =>
       raw.flatMap((r) =>
-        r.points.map((p) => ({
-          trendId: r.trendId,
-          geo: r.geo,
-          week: monday(p.time),
-          value: p.value,
-        })),
+        Object.entries(r.series).flatMap(([geo, pts]) =>
+          pts.map((p) => ({ trendId: r.trendId, geo, week: monday(p.time), value: p.value })),
+        ),
       ),
 
     async persist(ctx, norm) {
@@ -117,7 +127,7 @@ export function makeGoogleTrends(
               weekStart: p.week,
               value: p.value,
               isEstimated: false,
-              method: "google_trends relative index per country request",
+              method: METHOD,
               sourceId,
               confidence: 0.6,
             })),
@@ -129,11 +139,10 @@ export function makeGoogleTrends(
               trendSignalsTimeseries.metric,
               trendSignalsTimeseries.weekStart,
             ],
-            set: { value: sql`excluded.value`, fetchedAt: new Date() },
+            set: { value: sql`excluded.value`, method: METHOD, fetchedAt: new Date() },
           });
       }
-      const ids = new Set(norm.map((p) => p.trendId));
-      for (const id of ids)
+      for (const id of new Set(norm.map((p) => p.trendId)))
         await ctx.db
           .update(trackedKeywords)
           .set({ lastFetchedAt: new Date() })

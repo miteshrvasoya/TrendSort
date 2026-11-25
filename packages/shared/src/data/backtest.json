@@ -1,0 +1,215 @@
+{
+  "note": "ANALYST ESTIMATES from general knowledge, not measured data. Dates are approximate (+/- 6 months) and must be verified; the measure-lag job replaces them with Google Trends measurements when run with network access.",
+  "cases": [
+    {
+      "name": "Air fryer",
+      "term": "air fryer",
+      "group": "kitchen",
+      "usRise": "2017-12",
+      "inRise": "2019-10"
+    },
+    {
+      "name": "Instant Pot / electric pressure cooker",
+      "term": "instant pot",
+      "group": "kitchen",
+      "usRise": "2016-11",
+      "inRise": "2019-03"
+    },
+    {
+      "name": "Matcha at home",
+      "term": "matcha powder",
+      "group": "kitchen",
+      "usRise": "2019-01",
+      "inRise": "2022-01"
+    },
+    {
+      "name": "Cold brew coffee maker",
+      "term": "cold brew coffee maker",
+      "group": "kitchen",
+      "usRise": "2016-06",
+      "inRise": "2019-06"
+    },
+    {
+      "name": "Mushroom coffee",
+      "term": "mushroom coffee",
+      "group": "wellness",
+      "usRise": "2022-09",
+      "inRise": "2024-09"
+    },
+    {
+      "name": "Weighted blanket",
+      "term": "weighted blanket",
+      "group": "wellness",
+      "usRise": "2018-12",
+      "inRise": "2021-06"
+    },
+    {
+      "name": "Massage gun",
+      "term": "massage gun",
+      "group": "wellness",
+      "usRise": "2019-06",
+      "inRise": "2021-03"
+    },
+    {
+      "name": "Posture corrector",
+      "term": "posture corrector",
+      "group": "wellness",
+      "usRise": "2018-06",
+      "inRise": "2020-06"
+    },
+    {
+      "name": "Standing desk",
+      "term": "standing desk",
+      "group": "wellness",
+      "usRise": "2016-09",
+      "inRise": "2020-09"
+    },
+    {
+      "name": "Smartwatch",
+      "term": "smart watch",
+      "group": "tech",
+      "usRise": "2015-06",
+      "inRise": "2018-06"
+    },
+    {
+      "name": "Smart ring",
+      "term": "smart ring",
+      "group": "tech",
+      "usRise": "2022-06",
+      "inRise": "2024-03"
+    },
+    {
+      "name": "Robot vacuum",
+      "term": "robot vacuum",
+      "group": "tech",
+      "usRise": "2016-06",
+      "inRise": "2019-06"
+    },
+    {
+      "name": "Smart bulb",
+      "term": "smart bulb",
+      "group": "tech",
+      "usRise": "2016-03",
+      "inRise": "2019-03"
+    },
+    {
+      "name": "Bluetooth item tracker",
+      "term": "airtag",
+      "group": "tech",
+      "usRise": "2021-04",
+      "inRise": "2022-09"
+    },
+    {
+      "name": "Ring light",
+      "term": "ring light",
+      "group": "tech",
+      "usRise": "2019-03",
+      "inRise": "2020-04"
+    },
+    {
+      "name": "Gua sha",
+      "term": "gua sha",
+      "group": "beauty",
+      "usRise": "2018-10",
+      "inRise": "2020-10"
+    },
+    {
+      "name": "Jade roller",
+      "term": "jade roller",
+      "group": "beauty",
+      "usRise": "2018-06",
+      "inRise": "2020-03"
+    },
+    {
+      "name": "LED face mask",
+      "term": "led face mask",
+      "group": "beauty",
+      "usRise": "2019-02",
+      "inRise": "2022-03"
+    },
+    {
+      "name": "Skincare fridge",
+      "term": "skincare fridge",
+      "group": "beauty",
+      "usRise": "2021-06",
+      "inRise": "2023-03"
+    },
+    {
+      "name": "Insulated tumbler (Hydro Flask style)",
+      "term": "hydro flask",
+      "group": "drinkware",
+      "usRise": "2016-06",
+      "inRise": "2019-06"
+    },
+    {
+      "name": "Stanley-style 40oz tumbler",
+      "term": "stanley cup",
+      "group": "drinkware",
+      "usRise": "2023-10",
+      "inRise": "2024-10"
+    },
+    {
+      "name": "Personalised name necklace",
+      "term": "name necklace",
+      "group": "personalised",
+      "usRise": "2017-06",
+      "inRise": "2019-09"
+    },
+    {
+      "name": "Custom star map print",
+      "term": "star map",
+      "group": "personalised",
+      "usRise": "2019-12",
+      "inRise": "2023-03"
+    },
+    {
+      "name": "Custom pet portrait",
+      "term": "pet portrait",
+      "group": "personalised",
+      "usRise": "2020-06",
+      "inRise": "2022-12"
+    },
+    {
+      "name": "Engraved photo keepsake",
+      "term": "engraved photo gift",
+      "group": "personalised",
+      "usRise": "2018-09",
+      "inRise": "2021-01"
+    },
+    {
+      "name": "Aroma diffuser",
+      "term": "essential oil diffuser",
+      "group": "home",
+      "usRise": "2016-01",
+      "inRise": "2019-01"
+    },
+    {
+      "name": "Scented soy candle",
+      "term": "soy candle",
+      "group": "home",
+      "usRise": "2017-09",
+      "inRise": "2020-09"
+    },
+    {
+      "name": "Sunset projection lamp",
+      "term": "sunset lamp",
+      "group": "home",
+      "usRise": "2020-12",
+      "inRise": "2021-09"
+    },
+    {
+      "name": "Slow-feeder pet bowl",
+      "term": "slow feeder dog bowl",
+      "group": "pet",
+      "usRise": "2018-06",
+      "inRise": "2021-06"
+    },
+    {
+      "name": "Pet hair vacuum",
+      "term": "pet hair vacuum",
+      "group": "pet",
+      "usRise": "2018-01",
+      "inRise": "2021-01"
+    }
+  ]
+}

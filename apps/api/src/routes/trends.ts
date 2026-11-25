@@ -13,6 +13,7 @@ import { createTrendSchema } from "@trendbridge/shared";
 import { and, asc, desc, eq, sql } from "drizzle-orm";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
+import { opportunityFor, userWeights } from "../lib-scores";
 
 const slugify = (s: string) =>
   s
@@ -43,7 +44,7 @@ export const trendRoutes: FastifyPluginAsyncZod = async (app) => {
       select t.id, t.slug, t.name, t.description, t.sub_category as "subCategory", c.name as category, t.vertical_keys as "verticalKeys",
              t.occasion_keys as "occasionKeys", t.price_band_inr as "priceBandInr", t.is_sample as "isSample", t.status, t.origin,
              s.momentum, s.breadth, s.sustainability, s.commercial_proof as "commercialProof", s.opportunity,
-             s.adoption_stage as "adoptionStage", s.lag_months as "lagMonths", s.confidence, s.algorithm_version as "algorithmVersion",
+             s.adoption_stage as "adoptionStage", s.lag_months as "lagMonths", s.confidence, s.algorithm_version as "algorithmVersion", s.inputs as "scoreInputs",
              (select count(*)::int from news_items n where n.trend_id = t.id) as "newsCount",
              (select count(*)::int from products p where p.trend_id = t.id) as "productCount",
              (select max(fetched_at) from trend_signals_timeseries x where x.trend_id = t.id and not x.is_sample) as "lastSignalAt"
@@ -56,7 +57,24 @@ export const trendRoutes: FastifyPluginAsyncZod = async (app) => {
         and (${status ?? null}::text is null or t.status = ${status ?? ""})
       order by s.opportunity desc nulls last, t.id desc
       limit ${limit}`);
-      return rows.rows;
+      const weights = await userWeights(app.db, req.user.sub);
+      const out = (rows.rows as Record<string, unknown>[]).map((r) => {
+        const { scoreInputs, ...rest } = r;
+        const opp = opportunityFor(scoreInputs, weights);
+        const conf =
+          (scoreInputs as { confidence?: { level?: string } } | null)?.confidence?.level ?? null;
+        return {
+          ...rest,
+          opportunity: opp ? opp.score : (r.opportunity as number | null),
+          coverage: opp?.coverage ?? null,
+          confidenceLevel: conf,
+        };
+      });
+      out.sort(
+        (a, b) =>
+          ((b.opportunity as number | null) ?? -1) - ((a.opportunity as number | null) ?? -1),
+      );
+      return out;
     },
   );
 

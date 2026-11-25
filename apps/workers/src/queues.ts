@@ -3,9 +3,12 @@ import { Redis } from "ioredis";
 import type { Db } from "@trendbridge/db";
 import { CONNECTORS } from "./connectors";
 import { runConnector, type RunnerEnv } from "./framework/runner";
+import { httpAnalytics } from "./scoring/analytics";
+import { runScoring } from "./scoring/job";
 
 export const INGEST = "ingest";
 export const INGEST_DLQ = "ingest-dlq";
+export const SCORE = "score";
 
 /** Cron-like schedules per source (free-tier friendly). */
 export const SCHEDULES: Record<string, string> = {
@@ -22,10 +25,24 @@ export function makeRedis(url: string) {
 }
 
 export function createQueues(connection: Redis) {
-  return { ingest: new Queue(INGEST, { connection }), dlq: new Queue(INGEST_DLQ, { connection }) };
+  return {
+    ingest: new Queue(INGEST, { connection }),
+    dlq: new Queue(INGEST_DLQ, { connection }),
+    score: new Queue(SCORE, { connection }),
+  };
 }
 
-export async function registerSchedules(ingest: Queue) {
+export async function registerSchedules(ingest: Queue, score?: Queue) {
+  // daily re-score after the overnight ingestion runs
+  await score?.upsertJobScheduler(
+    "schedule:score",
+    { pattern: "30 4 * * *" },
+    {
+      name: "score",
+      data: {},
+      opts: { attempts: 2, backoff: { type: "exponential", delay: 60_000 } },
+    },
+  );
   for (const [sourceKey, pattern] of Object.entries(SCHEDULES)) {
     await ingest.upsertJobScheduler(
       `schedule:${sourceKey}`,
@@ -69,4 +86,24 @@ export function startWorker(opts: {
     }
   });
   return worker;
+}
+
+/** Scoring worker: `{ trendIds? }`. Needs the Python analytics service. */
+export function startScoreWorker(opts: {
+  connection: Redis;
+  db: Db;
+  analyticsUrl: string;
+  log: { info: (o: object, m?: string) => void; warn: (o: object, m?: string) => void };
+}) {
+  const analytics = httpAnalytics(opts.analyticsUrl);
+  return new Worker(
+    SCORE,
+    async (job: Job<{ trendIds?: number[] }>) => {
+      const r = await runScoring(opts.db, analytics, { trendIds: job.data.trendIds });
+      opts.log.info(r, "scoring finished");
+      if (r.scored === 0 && r.failed.length > 0) throw new Error(r.failed[0]!.error);
+      return r;
+    },
+    { connection: opts.connection, concurrency: 1 },
+  );
 }
