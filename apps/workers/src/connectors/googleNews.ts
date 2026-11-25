@@ -1,4 +1,4 @@
-import { activeKeywords, DEFAULT_QUERIES } from "../lib/keywords";
+import { activeKeywords, defaultQueries } from "../lib/keywords";
 import { persistNews, type NewsRecord } from "../lib/news";
 import { parseRss } from "../lib/rss";
 import { sourceIdOf } from "../lib/source";
@@ -30,7 +30,7 @@ export const googleNews: Connector<Raw, NewsRecord> = {
   async fetch(ctx) {
     if (ctx.fixtureMode) return fixture as Raw[];
     const kws = await activeKeywords(ctx.db, MAX_QUERIES);
-    const queries = kws.length ? kws.map((k) => k.term) : DEFAULT_QUERIES;
+    const queries = kws.length ? kws.map((k) => k.term) : await defaultQueries(ctx.db);
     const out: Raw[] = [];
     for (const q of queries)
       for (const geo of ["US", "IN"] as const) {

@@ -62,7 +62,10 @@ export const verticals = pgTable("verticals", {
   id: serial("id").primaryKey(),
   key: varchar("key", { length: 50 }).notNull().unique(),
   name: text("name").notNull(),
+  /** shipped default config (refreshed on seed) */
   config: jsonb("config").notNull().default({}),
+  /** your edits (keywords, queries, preset weights, feature presence); merged over `config`, never overwritten by seed */
+  overrides: jsonb("overrides").notNull().default({}),
 });
 
 export const festivals = pgTable("festivals", {

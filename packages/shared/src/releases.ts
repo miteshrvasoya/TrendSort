@@ -14,6 +14,32 @@ export interface ReleaseNote {
 
 export const RELEASES: ReleaseNote[] = [
   {
+    version: "0.6.0",
+    date: "2026-11-29",
+    title: "Config-driven verticals and the RO deep-dive",
+    summary:
+      "Verticals are now config files you can tune, and the Water Purification / RO vertical (for CLARYN) has its own page: feature gaps India has not filled, water-type fit, a one-click starter set, and a filter-subscription calculator.",
+    added: [
+      "Verticals page and a page per vertical (Gifts, Water Purification / RO, Home & Kitchen, Wellness, Pet, Beauty) with trends ranked by that vertical's own weighting or yours",
+      "Vertical configs (JSON, validated) drive default news queries, scoring-weight presets, extra India-fit notes, starter trends and the feature taxonomy; edit queries, keywords, weights and India presence in the app, reset any time",
+      "RO feature-gap matrix: 11 features (under-sink, countertop, UV-C, mineral add-back, IoT monitoring, filter subscription, hydrogen water, zero-waste design, compact design, instant-hot, whole-house) with India presence (editable estimate), foreign momentum, India stage and a gap score",
+      "Water-type guide: municipal low-TDS, mixed medium-TDS and borewell high-TDS profiles, with a good/partial/poor fit per feature",
+      "Starter set: one click tracks 11 RO feature trends with their search keywords",
+      "Filter subscription / refill economics calculator: annual contribution, lifetime, lifetime value, LTV:CAC and payback",
+      "RO India-fit notes: service network, installation conditions, reject-water messaging, health claims",
+    ],
+    changed: [
+      "Default news queries now come from the vertical configs instead of code",
+      "The Verticals list replaces the hard-coded vertical filter lists' source of truth (config)",
+    ],
+    fixed: [],
+    removed: [
+      "Per-vertical 'source weights' (nothing used them yet; they return when a second quantitative source exists)",
+    ],
+    forYou:
+      "Open Verticals, then Water Purification / RO and click Track starter set. After the next Google Trends and scoring runs you will see which RO features are taking off abroad while India's brands barely have them, and whether each suits your customers' water. India presence per feature is my rough estimate, so edit it with what you know about the market.",
+  },
+  {
     version: "0.5.0",
     date: "2026-11-28",
     title: "Product economics, reviews and India fit",

@@ -1,0 +1,1 @@
+ALTER TABLE "verticals" ADD COLUMN "overrides" jsonb DEFAULT '{}'::jsonb NOT NULL;

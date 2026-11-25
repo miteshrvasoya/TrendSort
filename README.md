@@ -1,6 +1,6 @@
 # TrendBridge
 
-Finds products trending abroad before they peak in India, scores India-readiness, and compares import vs Indian-manufacture economics. Free data only (Rs 0). Current version: **0.5.0 (Phase 4: Product economics, reviews and India fit)**. See `docs/PROPOSAL.md` for the full design.
+Finds products trending abroad before they peak in India, scores India-readiness, and compares import vs Indian-manufacture economics. Free data only (Rs 0). Current version: **0.6.0 (Phase 5: Config-driven verticals and the RO deep-dive)**. See `docs/PROPOSAL.md` for the full design.
 
 ## Run locally (about 10 minutes)
 
@@ -46,6 +46,10 @@ Sourcing deadlines assume 84 days to import + 21 days to list (45 + 21 for India
 ## Economics, reviews and fit (Phase 4)
 
 Open a trend, then **Unit economics → Open calculator**. Defaults come from **Economics → Edit duty & fee tables** (indicative placeholders; verify with your CHA and seller portal, then edit: each edit is a new version). Save a scenario as the trend's primary to feed its margin into the score, then **Re-score all**. Reviews and India listings are added through **Import**. See `docs/ECONOMICS.md`.
+
+## Verticals and the RO deep-dive (Phase 5)
+
+Open **Verticals → Water Purification / RO → Track starter set**, run Google Trends from the Source Registry, then **Re-score all**. The feature-gap matrix, water-type guide and subscription calculator are on that page. Vertical definitions live in `packages/shared/src/data/verticals/*.json` (see `docs/VERTICALS.md`).
 
 ## Test
 

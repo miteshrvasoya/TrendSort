@@ -1,0 +1,26 @@
+{
+  "key": "pet",
+  "name": "Pet",
+  "description": "Pet accessories, feeding, grooming and cleaning.",
+  "keywords": ["pet", "dog", "cat", "grooming"],
+  "newsQueries": ["pet product trends", "dog accessories trends", "pet care India"],
+  "presetWeights": {
+    "foreignMomentum": 0.2,
+    "lagWindow": 0.16,
+    "competitionGap": 0.16,
+    "priceFit": 0.1,
+    "margin": 0.14,
+    "regulatory": 0.06,
+    "logistics": 0.1,
+    "seasonality": 0.08
+  },
+  "indiaFitNotes": [
+    {
+      "key": "climate_pet",
+      "title": "Climate and breed fit",
+      "detail": "Indian heat and humidity, common breeds and apartment living change what sells (cooling mats, shedding tools, small-dog sizes).",
+      "verifyWith": "local vets and groomers",
+      "status": "check"
+    }
+  ]
+}

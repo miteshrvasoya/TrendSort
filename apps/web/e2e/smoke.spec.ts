@@ -48,6 +48,12 @@ test("login, What's New modal, guided tour, theme and source registry", async ({
   await page.goto("/gifts/corporate");
   await page.getByLabel("Order quantity").fill("120");
   await expect(page.getByText(/At 120 units/).first()).toBeVisible();
+  await page.goto("/verticals/ro");
+  await expect(page.getByText("Feature gaps India has not filled")).toBeVisible();
+  await page.getByLabel("Water type").selectOption("borewell_high");
+  await expect(page.getByText("Guidance, not a water test.")).toBeVisible();
+  await page.getByLabel("Subscription price / year (incl. GST)").fill("3000");
+  await expect(page.getByText(/LTV : CAC/)).toBeVisible();
   await page.goto("/economics");
   await expect(page.getByText("Recommended route")).toBeVisible();
   await expect(page.getByTestId("placeholder-warning")).toBeVisible();

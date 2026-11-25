@@ -1,0 +1,33 @@
+{
+  "key": "home-kitchen",
+  "name": "Home & Kitchen",
+  "description": "Kitchen gadgets, organisers, appliances and home accessories.",
+  "keywords": ["kitchen", "home", "organiser", "cookware", "appliance"],
+  "newsQueries": ["viral kitchen gadget", "home organisation trends", "air fryer accessories"],
+  "presetWeights": {
+    "foreignMomentum": 0.2,
+    "lagWindow": 0.16,
+    "competitionGap": 0.16,
+    "priceFit": 0.1,
+    "margin": 0.16,
+    "regulatory": 0.08,
+    "logistics": 0.08,
+    "seasonality": 0.06
+  },
+  "indiaFitNotes": [
+    {
+      "key": "indian_cooking",
+      "title": "Fit with Indian cooking",
+      "detail": "Check capacity and heat tolerance for Indian cooking (high-heat tadka, large vessels, grinding). Western-sized products are often too small.",
+      "verifyWith": "kitchen owners you know",
+      "status": "check"
+    },
+    {
+      "key": "voltage_kitchen",
+      "title": "Wattage and sockets",
+      "detail": "Check wattage against typical Indian household circuits and that the plug and cord length suit Indian kitchens.",
+      "verifyWith": "BIS and your supplier",
+      "status": "check"
+    }
+  ]
+}

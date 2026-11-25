@@ -31,3 +31,8 @@
 29. **Reviews are imported, not scraped**, and mined with a lexicon (Rs 0, no LLM). India listings come from Amazon.in top lists plus imports; the UI distinguishes "not checked" from "none found in scanned lists".
 30. **Only saved fit attributes feed scores.** Heuristic inference is shown and marked, never silently scored. Same rule for scenarios: only a primary scenario feeds margin.
 31. **Text matching helpers moved to `packages/shared/src/text.ts`** and are used by both workers and API.
+32. **Verticals are validated JSON files** with in-app overrides stored separately (`verticals.overrides`), so seeding refreshes defaults without clobbering your edits, and Reset is trivial.
+33. **Only config fields that change behaviour exist.** Per-vertical source weights were removed because nothing consumed them; they return when a second quantitative source does.
+34. **Feature gap = foreign momentum x (3 - India presence)/3**, with India presence a category-level analyst estimate you can edit. I deliberately did not assert brand-by-brand competitor feature claims I cannot verify.
+35. **Vertical India-fit notes are informational** (penalty 0) so config text cannot silently move scores; scoring still uses only saved fit attributes.
+36. **Starter trends use names distinct from the sample trends** so tracking them never collides with demo data.

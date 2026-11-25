@@ -21,6 +21,7 @@ import { marketRoutes } from "./routes/market";
 import { importRoutes } from "./routes/import";
 import { scoringRoutes } from "./routes/scoring";
 import { sourceRoutes } from "./routes/sources";
+import { verticalRoutes } from "./routes/verticals";
 import { trendRoutes } from "./routes/trends";
 
 declare module "fastify" {
@@ -73,6 +74,7 @@ export async function buildApp(opts: { db: Db; config: Config; logger?: boolean 
   await app.register(giftRoutes);
   await app.register(economicsRoutes);
   await app.register(marketRoutes);
+  await app.register(verticalRoutes);
   await app.register(trendRoutes);
   return app;
 }

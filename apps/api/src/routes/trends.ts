@@ -13,7 +13,9 @@ import { createTrendSchema } from "@trendbridge/shared";
 import { and, asc, desc, eq, sql } from "drizzle-orm";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
+import { normaliseWeights } from "@trendbridge/shared";
 import { opportunityFor, userWeights } from "../lib-scores";
+import { loadVertical } from "../lib-verticals";
 
 const slugify = (s: string) =>
   s
@@ -35,11 +37,12 @@ export const trendRoutes: FastifyPluginAsyncZod = async (app) => {
           limit: z.coerce.number().min(1).max(200).default(100),
           data: z.enum(["all", "sample", "real"]).default("all"),
           status: z.enum(["tracked", "candidate"]).optional(),
+          preset: z.enum(["mine", "vertical"]).default("mine"),
         }),
       },
     },
     async (req) => {
-      const { vertical, q, limit, data, status } = req.query;
+      const { vertical, q, limit, data, status, preset } = req.query;
       const rows = await app.db.execute(sql`
       select t.id, t.slug, t.name, t.description, t.sub_category as "subCategory", c.name as category, t.vertical_keys as "verticalKeys",
              t.occasion_keys as "occasionKeys", t.price_band_inr as "priceBandInr", t.is_sample as "isSample", t.status, t.origin,
@@ -57,7 +60,11 @@ export const trendRoutes: FastifyPluginAsyncZod = async (app) => {
         and (${status ?? null}::text is null or t.status = ${status ?? ""})
       order by s.opportunity desc nulls last, t.id desc
       limit ${limit}`);
-      const weights = await userWeights(app.db, req.user.sub);
+      // preset=vertical ranks with the vertical's own weighting (e.g. RO values regulation and logistics more); otherwise your weights
+      const vert = preset === "vertical" && vertical ? await loadVertical(app, vertical) : null;
+      const weights = vert
+        ? normaliseWeights(vert.effective.presetWeights)
+        : await userWeights(app.db, req.user.sub);
       const out = (rows.rows as Record<string, unknown>[]).map((r) => {
         const { scoreInputs, ...rest } = r;
         const opp = opportunityFor(scoreInputs, weights);

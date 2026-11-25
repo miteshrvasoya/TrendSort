@@ -18,6 +18,7 @@ import {
 import { desc, eq, sql } from "drizzle-orm";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
+import { loadVertical } from "../lib-verticals";
 
 const id = z.object({ id: z.coerce.number() });
 const fitSchema = z.object({
@@ -129,6 +130,19 @@ export const marketRoutes: FastifyPluginAsyncZod = async (app) => {
       const attrs = (saved?.attrs as FitAttrs | undefined) ?? inferred;
       const brandHits = detectBrands(titles);
       const checks = runFitChecks(attrs, brandHits);
+      // vertical-specific notes come from the vertical configs (informational: they do not change the score)
+      for (const vk of t.verticalKeys) {
+        const vc = await loadVertical(app, vk);
+        for (const n of vc?.effective.indiaFitNotes ?? [])
+          checks.push({
+            key: `${vk}:${n.key}`,
+            title: n.title,
+            status: n.status,
+            detail: n.detail,
+            verifyWith: n.verifyWith,
+            penalty: 0,
+          });
+      }
       return {
         saved: !!saved,
         attrs,

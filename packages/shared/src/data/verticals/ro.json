@@ -1,0 +1,283 @@
+{
+  "key": "ro",
+  "name": "Water Purification / RO",
+  "description": "Water purifiers, RO, UV, mineral add-back, smart monitoring and subscription models, compared with Indian adoption (TDS, borewell vs municipal, reject-water concerns, AMC culture). First deep-dive vertical, for CLARYN.",
+  "keywords": [
+    "water purifier",
+    "reverse osmosis",
+    "under-sink",
+    "countertop",
+    "UV-C",
+    "alkaline",
+    "tankless",
+    "TDS"
+  ],
+  "newsQueries": [
+    "water purifier trends",
+    "reverse osmosis home",
+    "tankless RO",
+    "smart water purifier",
+    "water filter subscription"
+  ],
+  "presetWeights": {
+    "foreignMomentum": 0.18,
+    "lagWindow": 0.14,
+    "competitionGap": 0.18,
+    "priceFit": 0.06,
+    "margin": 0.16,
+    "regulatory": 0.12,
+    "logistics": 0.1,
+    "seasonality": 0.02
+  },
+  "indiaFitNotes": [
+    {
+      "key": "service_network",
+      "title": "Service and installation network",
+      "detail": "Indian RO buyers expect quick installation and AMC service in their own town. Plan technician coverage, spare filters and response times before promising nationwide delivery.",
+      "verifyWith": "your service partners",
+      "status": "check"
+    },
+    {
+      "key": "install_conditions",
+      "title": "Installation conditions",
+      "detail": "Many homes have low line pressure, intermittent supply and overhead tanks. Confirm the product works at low pressure (or with a booster pump) and through power cuts if it is electric.",
+      "verifyWith": "a pilot installation",
+      "status": "check"
+    },
+    {
+      "key": "reject_water",
+      "title": "Reject-water messaging",
+      "detail": "Concern about RO wastewater is rising. Claims such as 'zero wastage' need evidence you can show, and a reuse-water story helps.",
+      "verifyWith": "your test data",
+      "status": "check"
+    },
+    {
+      "key": "claims",
+      "title": "Health and taste claims",
+      "detail": "Alkaline, hydrogen and 'mineral' benefit claims can attract regulatory and consumer scrutiny. Keep claims factual and test-backed.",
+      "verifyWith": "FSSAI and ASCI guidelines",
+      "status": "check"
+    }
+  ],
+  "features": [
+    {
+      "key": "under_sink",
+      "label": "Under-sink / tankless RO",
+      "description": "Hidden under the counter, often tankless with a fast flow.",
+      "matchTerm": "under-sink",
+      "indiaPresence": 1,
+      "presenceNote": "Most Indian units are wall-mounted or countertop with a storage tank; tankless under-sink is uncommon."
+    },
+    {
+      "key": "countertop",
+      "label": "Countertop RO (no plumbing)",
+      "description": "Plug-in units with no installation.",
+      "matchTerm": "countertop",
+      "indiaPresence": 2,
+      "presenceNote": "Some brands sell countertop or portable RO."
+    },
+    {
+      "key": "uvc",
+      "label": "UV-C self-cleaning bottles",
+      "description": "Portable UV-C sterilisation.",
+      "matchTerm": "UV-C",
+      "indiaPresence": 1,
+      "presenceNote": "UV stages inside purifiers are common, but portable UV-C bottles are rare."
+    },
+    {
+      "key": "mineral",
+      "label": "Alkaline / mineral add-back",
+      "description": "Restores minerals after RO.",
+      "matchTerm": "alkaline",
+      "indiaPresence": 3,
+      "presenceNote": "Mineral cartridges are widespread in Indian RO."
+    },
+    {
+      "key": "iot",
+      "label": "Smart / IoT water-quality monitoring",
+      "description": "TDS sensing, app alerts, filter-life tracking.",
+      "matchTerm": "iot",
+      "indiaPresence": 1,
+      "presenceNote": "A few connected models; not mainstream."
+    },
+    {
+      "key": "subscription",
+      "label": "Filter subscription / auto-refill",
+      "description": "App-driven filter delivery or pay-per-month service.",
+      "matchTerm": "subscription",
+      "indiaPresence": 1,
+      "presenceNote": "AMC contracts are common, but app-driven auto-refill subscriptions are rare."
+    },
+    {
+      "key": "hydrogen",
+      "label": "Hydrogen-rich water",
+      "description": "Hydrogen-infused drinking water devices.",
+      "matchTerm": "hydrogen",
+      "indiaPresence": 1,
+      "presenceNote": "A few imports, little local supply."
+    },
+    {
+      "key": "zero_waste",
+      "label": "Zero / low reject-water design",
+      "description": "Recycles or minimises reject water.",
+      "matchTerm": "zero waste",
+      "indiaPresence": 2,
+      "presenceNote": "Several brands claim water saving; claims vary in substance."
+    },
+    {
+      "key": "compact",
+      "label": "Compact, minimalist design",
+      "description": "Slim, wall-mounted, design-led units.",
+      "matchTerm": "compact",
+      "indiaPresence": 2,
+      "presenceNote": "Compact models exist; design-led positioning is limited."
+    },
+    {
+      "key": "instant_hot",
+      "label": "Instant-hot / temperature dispensing",
+      "description": "Hot, ambient and cold water from one unit.",
+      "matchTerm": "instant hot",
+      "indiaPresence": 2,
+      "presenceNote": "Available from several brands at higher price points."
+    },
+    {
+      "key": "whole_house",
+      "label": "Whole-house filtration",
+      "description": "Sediment and carbon filtration at the inlet.",
+      "matchTerm": "whole-house",
+      "indiaPresence": 1,
+      "presenceNote": "Mostly sold through plumbers and projects, not branded retail."
+    }
+  ],
+  "starterTrends": [
+    {
+      "name": "Under-sink RO (tankless)",
+      "keywords": ["tankless reverse osmosis", "under sink reverse osmosis"],
+      "feature": "under_sink",
+      "category": "Water Purification"
+    },
+    {
+      "name": "Countertop RO purifier",
+      "keywords": ["countertop reverse osmosis", "countertop water purifier"],
+      "feature": "countertop",
+      "category": "Water Purification"
+    },
+    {
+      "name": "UV-C self-cleaning water bottle",
+      "keywords": ["uv-c water bottle", "self cleaning water bottle"],
+      "feature": "uvc",
+      "category": "Water Purification"
+    },
+    {
+      "name": "Alkaline mineral water filter",
+      "keywords": ["alkaline water filter", "remineralization filter"],
+      "feature": "mineral",
+      "category": "Water Purification"
+    },
+    {
+      "name": "Smart TDS water monitor",
+      "keywords": ["smart water quality monitor", "tds meter app"],
+      "feature": "iot",
+      "category": "Water Purification"
+    },
+    {
+      "name": "Water filter subscription",
+      "keywords": ["water filter subscription", "filter replacement subscription"],
+      "feature": "subscription",
+      "category": "Water Purification"
+    },
+    {
+      "name": "Hydrogen water bottle",
+      "keywords": ["hydrogen water bottle", "hydrogen water generator"],
+      "feature": "hydrogen",
+      "category": "Water Purification"
+    },
+    {
+      "name": "Zero waste RO purifier",
+      "keywords": ["zero waste water purifier", "low reject water RO"],
+      "feature": "zero_waste",
+      "category": "Water Purification"
+    },
+    {
+      "name": "Compact wall-mounted purifier",
+      "keywords": ["compact water purifier", "slim water purifier"],
+      "feature": "compact",
+      "category": "Water Purification"
+    },
+    {
+      "name": "Instant hot water dispenser",
+      "keywords": ["instant hot water dispenser", "hot and cold water dispenser"],
+      "feature": "instant_hot",
+      "category": "Water Purification"
+    },
+    {
+      "name": "Whole house water filter",
+      "keywords": ["whole house water filter", "sediment carbon filter"],
+      "feature": "whole_house",
+      "category": "Water Purification"
+    }
+  ],
+  "waterProfiles": [
+    {
+      "key": "municipal_low",
+      "label": "Treated municipal supply, TDS under ~300",
+      "typicalSource": "Many municipal supplies in large cities",
+      "recommended": "UV + UF is often enough; RO is optional (with a TDS controller to keep minerals).",
+      "notes": "Over-purifying low-TDS water strips minerals and wastes water; RO is a harder sell here.",
+      "featureFit": {
+        "under_sink": "partial",
+        "countertop": "partial",
+        "uvc": "good",
+        "mineral": "partial",
+        "iot": "good",
+        "subscription": "good",
+        "hydrogen": "partial",
+        "zero_waste": "good",
+        "compact": "good",
+        "instant_hot": "good",
+        "whole_house": "good"
+      }
+    },
+    {
+      "key": "mixed_medium",
+      "label": "Mixed supply, TDS ~300 to 600",
+      "typicalSource": "Tank-fed or mixed municipal / borewell",
+      "recommended": "RO with a TDS controller; mineral add-back helps taste.",
+      "notes": "The core RO market in many cities.",
+      "featureFit": {
+        "under_sink": "good",
+        "countertop": "good",
+        "uvc": "good",
+        "mineral": "good",
+        "iot": "good",
+        "subscription": "good",
+        "hydrogen": "partial",
+        "zero_waste": "good",
+        "compact": "good",
+        "instant_hot": "good",
+        "whole_house": "partial"
+      }
+    },
+    {
+      "key": "borewell_high",
+      "label": "Borewell, TDS above ~600 and hard water",
+      "typicalSource": "Borewell / groundwater",
+      "recommended": "RO is essential, with sediment pre-filtration and often softening for hardness.",
+      "notes": "Membranes wear faster, reject water is highest and weak-pump units struggle. Reject-water reuse and filter subscriptions matter most here.",
+      "featureFit": {
+        "under_sink": "partial",
+        "countertop": "poor",
+        "uvc": "good",
+        "mineral": "partial",
+        "iot": "good",
+        "subscription": "good",
+        "hydrogen": "poor",
+        "zero_waste": "good",
+        "compact": "partial",
+        "instant_hot": "good",
+        "whole_house": "good"
+      }
+    }
+  ],
+  "tools": ["subscription"]
+}

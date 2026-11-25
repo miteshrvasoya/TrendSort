@@ -2,6 +2,24 @@
 
 All notable changes. Format: [Semantic Versioning](https://semver.org). Release notes also live in the app (What's New) and the `app_versions` / `release_notes` tables; the source of truth is `packages/shared/src/releases.ts`.
 
+## 0.6.0 — 2026-11-29 — Config-driven verticals and the RO deep-dive
+
+**What this means for you:** open Verticals, then Water Purification / RO, click Track starter set, and after the next Google Trends and scoring runs you see which RO features are rising abroad while India's brands lack them, and whether each suits the water. India presence per feature is a rough estimate: edit it.
+
+### Added
+
+- Vertical configs (validated JSON) driving news queries, scoring-weight presets, India-fit notes, starter trends and feature taxonomy; in-app overrides with reset
+- Verticals page and per-vertical pages; trends ranked by the vertical's weighting or yours
+- RO feature-gap matrix, water-type fit guide, starter set, filter-subscription calculator, RO India-fit notes
+
+### Changed
+
+- Default news queries come from vertical configs
+
+### Removed
+
+- Unused per-vertical source weights
+
 ## 0.5.0 — 2026-11-28 — Product economics, reviews and India fit
 
 **What this means for you:** open any trend and see whether it makes money in India, which route is best, what could block you, and what buyers complain about. Duty and fee rows are indicative placeholders: verify and edit them. Checks are a to-do list, not legal advice.

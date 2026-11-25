@@ -1,0 +1,31 @@
+{
+  "key": "wellness",
+  "name": "Wellness",
+  "description": "Recovery, sleep, supplements-adjacent and wellness devices.",
+  "keywords": ["wellness", "recovery", "sleep", "massage", "supplement"],
+  "newsQueries": [
+    "wellness trends",
+    "sleep products trends",
+    "recovery devices",
+    "functional drink trends"
+  ],
+  "presetWeights": {
+    "foreignMomentum": 0.2,
+    "lagWindow": 0.16,
+    "competitionGap": 0.14,
+    "priceFit": 0.08,
+    "margin": 0.14,
+    "regulatory": 0.14,
+    "logistics": 0.06,
+    "seasonality": 0.08
+  },
+  "indiaFitNotes": [
+    {
+      "key": "health_claims",
+      "title": "Health claims",
+      "detail": "Wellness products attract scrutiny for medical-sounding claims. Keep claims factual; supplements and food-like products need FSSAI compliance, devices may need CDSCO classification.",
+      "verifyWith": "FSSAI, CDSCO, ASCI",
+      "status": "check"
+    }
+  ]
+}

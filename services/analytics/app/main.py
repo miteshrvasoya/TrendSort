@@ -18,7 +18,7 @@ class LeadLagRequest(BaseModel):
 
 @app.get("/health")
 def health():
-    return {"ok": True, "version": "0.5.0"}
+    return {"ok": True, "version": "0.6.0"}
 
 
 @app.post("/lead-lag")

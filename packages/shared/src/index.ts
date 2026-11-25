@@ -14,6 +14,7 @@ export * from "./economics";
 export * from "./fit";
 export * from "./reviews";
 export * from "./text";
+export * from "./subscription";
 
 export const FESTIVALS = festivalsJson;
 export const SOURCE_CATALOG = sourcesJson;

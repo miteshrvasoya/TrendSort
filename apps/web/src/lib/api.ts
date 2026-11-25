@@ -419,3 +419,49 @@ export interface FitResponse {
   scores: { regulatory: number; logistics: number };
   disclaimer: string;
 }
+
+export interface VerticalSummary {
+  key: string;
+  name: string;
+  description: string;
+  trends: number;
+  real: number;
+  sample: number;
+  scored: number;
+  avgOpportunity: number | null;
+  top: { id: number; name: string; opportunity: number | null; isSample: boolean } | null;
+  hasFeatures: boolean;
+  tools: string[];
+  customised: boolean;
+}
+export interface VerticalDetail {
+  key: string;
+  defaults: import("@trendbridge/shared").VerticalConfig;
+  overrides: import("@trendbridge/shared").VerticalOverrides;
+  effective: import("@trendbridge/shared").VerticalConfig;
+}
+export interface FeatureRow {
+  key: string;
+  label: string;
+  description: string;
+  presence: number;
+  defaultPresence: number;
+  presenceLabel: string;
+  presenceNote: string;
+  edited: boolean;
+  gap: number | null;
+  trend: {
+    id: number;
+    name: string;
+    isSample: boolean;
+    stage: string | null;
+    opportunity: number | null;
+    foreignMomentum: number | null;
+    confidenceLevel: string | null;
+  } | null;
+}
+export interface FeatureMatrix {
+  features: FeatureRow[];
+  waterProfiles: NonNullable<import("@trendbridge/shared").VerticalConfig["waterProfiles"]>;
+  note: string;
+}

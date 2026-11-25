@@ -1,0 +1,31 @@
+{
+  "key": "gifts",
+  "name": "Gifts",
+  "description": "Occasion, festival, personalised, corporate, kids, home, wellness and tech gifts. Seasonality and budget band matter most.",
+  "keywords": ["gift", "personalised", "hamper", "keepsake", "custom", "engraved"],
+  "newsQueries": [
+    "gift trends",
+    "personalised gifts",
+    "corporate gifting trends",
+    "festive gift hampers"
+  ],
+  "presetWeights": {
+    "foreignMomentum": 0.2,
+    "lagWindow": 0.16,
+    "competitionGap": 0.12,
+    "priceFit": 0.14,
+    "margin": 0.14,
+    "regulatory": 0.05,
+    "logistics": 0.05,
+    "seasonality": 0.14
+  },
+  "indiaFitNotes": [
+    {
+      "key": "festive_packaging",
+      "title": "Festive packaging and presentation",
+      "detail": "Gifts are judged on presentation: plan gift-ready packaging, a card option and festival colours. Damaged or plain packaging drives returns and bad reviews.",
+      "verifyWith": "your packaging supplier",
+      "status": "check"
+    }
+  ]
+}

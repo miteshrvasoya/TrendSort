@@ -1,4 +1,10 @@
-import { trackedKeywords, trendEntities, type Db } from "@trendbridge/db";
+import { trackedKeywords, trendEntities, verticals, type Db } from "@trendbridge/db";
+import {
+  VERTICALS,
+  allNewsQueries,
+  effectiveVertical,
+  verticalOverridesSchema,
+} from "@trendbridge/shared";
 import { and, asc, eq, sql } from "drizzle-orm";
 
 /** Active tracked terms, least recently fetched first. Sample entities are never fetched. */
@@ -23,11 +29,18 @@ export async function activeKeywords(db: Db, limit: number, opts: { vertical?: s
     .limit(limit);
 }
 
-/** Fallback queries so news flows even before you add keywords. Driven by verticals config. */
-export const DEFAULT_QUERIES = [
-  "gift trends",
-  "personalised gifts",
-  "water purifier trends",
-  "reverse osmosis home",
-  "viral kitchen gadget",
-];
+/**
+ * Fallback news queries so headlines flow before you track anything. They come from the vertical configs
+ * (shipped defaults plus your saved overrides), not from code.
+ */
+export async function defaultQueries(db: Db): Promise<string[]> {
+  const rows = await db
+    .select({ key: verticals.key, overrides: verticals.overrides })
+    .from(verticals);
+  const by = new Map(rows.map((r) => [r.key, r.overrides]));
+  const configs = VERTICALS.map((base) => {
+    const parsed = verticalOverridesSchema.safeParse(by.get(base.key) ?? {});
+    return effectiveVertical(base, parsed.success ? parsed.data : {});
+  });
+  return allNewsQueries(configs);
+}

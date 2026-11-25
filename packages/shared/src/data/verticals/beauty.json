@@ -1,0 +1,33 @@
+{
+  "key": "beauty",
+  "name": "Beauty",
+  "description": "Skincare, tools, devices and haircare.",
+  "keywords": ["skincare", "beauty", "haircare", "gua sha", "LED mask"],
+  "newsQueries": ["skincare trends", "beauty device trends", "haircare trends"],
+  "presetWeights": {
+    "foreignMomentum": 0.2,
+    "lagWindow": 0.16,
+    "competitionGap": 0.12,
+    "priceFit": 0.08,
+    "margin": 0.14,
+    "regulatory": 0.16,
+    "logistics": 0.06,
+    "seasonality": 0.08
+  },
+  "indiaFitNotes": [
+    {
+      "key": "skin_fit",
+      "title": "Skin type and climate fit",
+      "detail": "Formulations and shades tested on other populations may not suit Indian skin tones and humid climates. Check ingredient claims and patch-test guidance.",
+      "verifyWith": "dermatologist input",
+      "status": "check"
+    },
+    {
+      "key": "cosmetic_reg",
+      "title": "Cosmetics regulation",
+      "detail": "Imported cosmetics need CDSCO import registration, and labels must carry required declarations.",
+      "verifyWith": "CDSCO",
+      "status": "check"
+    }
+  ]
+}
