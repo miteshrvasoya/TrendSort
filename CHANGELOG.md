@@ -2,6 +2,22 @@
 
 All notable changes. Format: [Semantic Versioning](https://semver.org). Release notes also live in the app (What's New) and the `app_versions` / `release_notes` tables; the source of truth is `packages/shared/src/releases.ts`.
 
+## 0.7.0 — 2026-11-30 — Reports, alerts, pipeline and the prediction tracker
+
+**What this means for you:** a Monday summary, a bell when something crosses your line, and a board to move ideas from spotted to selling. The prediction tracker tells you whether to trust the model; live results take 6 months, so use the back-test now. On sample data it only proves the plumbing.
+
+### Added
+
+- Weekly report (Monday job; PDF, Markdown, optional email via your SMTP)
+- Alerts (score crossing, India momentum, India stage up), bell, watchlists, trend-page actions
+- Idea pipeline board with quotes, results and stage history
+- Prediction tracker (live + back-test, baseline comparison, calibration)
+- Analytics page (matrix, heatmap, rising stars, treemap, movers); CSV exports
+
+### Changed
+
+- Scoring runs record predictions, resolve due ones and check alerts
+
 ## 0.6.0 — 2026-11-29 — Config-driven verticals and the RO deep-dive
 
 **What this means for you:** open Verticals, then Water Purification / RO, click Track starter set, and after the next Google Trends and scoring runs you see which RO features are rising abroad while India's brands lack them, and whether each suits the water. India presence per feature is a rough estimate: edit it.

@@ -4,7 +4,7 @@ import { TrackTrendDialog } from "@/components/track-trend-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { api, type TrendRow } from "@/lib/api";
+import { api, downloadFile, type TrendRow } from "@/lib/api";
 import { SCORE_HELP } from "@/lib/scores";
 import { STAGE_LABEL, fmtScore } from "@/lib/utils";
 import { ConfidenceBadge } from "@/components/confidence-badge";
@@ -152,6 +152,17 @@ export default function TrendsPage() {
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h1 className="text-2xl font-bold">Trend Explorer</h1>
         <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={() =>
+              downloadFile(
+                `/export/trends.csv${data === "real" ? "?data=real" : data === "sample" ? "?data=sample" : ""}`,
+                "trendbridge-trends.csv",
+              ).catch((e) => setNote((e as Error).message))
+            }
+          >
+            Export CSV
+          </Button>
           <Button variant="outline" disabled={scoring.isPending} onClick={() => scoring.mutate()}>
             {scoring.isPending ? "Queuing…" : "Re-score all"}
           </Button>

@@ -3,7 +3,10 @@ import { Redis } from "ioredis";
 import type { Db } from "@trendbridge/db";
 import { CONNECTORS } from "./connectors";
 import { runConnector, type RunnerEnv } from "./framework/runner";
+import { evaluateAlerts, recordPredictions, resolvePredictions } from "@trendbridge/db";
+import { runWeeklyReport } from "./reports/job";
 import { httpAnalytics } from "./scoring/analytics";
+import { runPredictionBacktest } from "./scoring/backtest-predictions";
 import { runScoring } from "./scoring/job";
 
 export const INGEST = "ingest";
@@ -34,6 +37,16 @@ export function createQueues(connection: Redis) {
 }
 
 export async function registerSchedules(ingest: Queue, score?: Queue) {
+  // Monday report after the daily scoring run
+  await score?.upsertJobScheduler(
+    "schedule:weekly-report",
+    { pattern: "30 5 * * 1" },
+    {
+      name: "weekly-report",
+      data: {},
+      opts: { attempts: 2, backoff: { type: "exponential", delay: 60_000 } },
+    },
+  );
   // daily re-score after the overnight ingestion runs
   await score?.upsertJobScheduler(
     "schedule:score",
@@ -100,10 +113,27 @@ export function startScoreWorker(opts: {
   return new Worker(
     SCORE,
     async (job: Job<{ trendIds?: number[] }>) => {
+      if (job.name === "predictions-backtest") {
+        const r = await runPredictionBacktest(opts.db, analytics);
+        opts.log.info(r, "prediction back-test finished");
+        return r;
+      }
+      if (job.name === "weekly-report") {
+        const r = await runWeeklyReport(opts.db);
+        opts.log.info(r ?? {}, "weekly report generated");
+        return r;
+      }
       const r = await runScoring(opts.db, analytics, { trendIds: job.data.trendIds });
       opts.log.info(r, "scoring finished");
       if (r.scored === 0 && r.failed.length > 0) throw new Error(r.failed[0]!.error);
-      return r;
+      // after fresh scores: record live predictions, resolve due ones, then check alerts
+      const after = {
+        predictionsRecorded: await recordPredictions(opts.db),
+        predictionsResolved: await resolvePredictions(opts.db),
+        alerts: await evaluateAlerts(opts.db),
+      };
+      opts.log.info(after, "post-scoring workflow finished");
+      return { ...r, ...after };
     },
     { connection: opts.connection, concurrency: 1 },
   );

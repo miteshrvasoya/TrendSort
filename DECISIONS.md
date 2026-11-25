@@ -36,3 +36,9 @@
 34. **Feature gap = foreign momentum x (3 - India presence)/3**, with India presence a category-level analyst estimate you can edit. I deliberately did not assert brand-by-brand competitor feature claims I cannot verify.
 35. **Vertical India-fit notes are informational** (penalty 0) so config text cannot silently move scores; scoring still uses only saved fit attributes.
 36. **Starter trends use names distinct from the sample trends** so tracking them never collides with demo data.
+37. **Alerts fire on crossings with a per-day fingerprint**, so a metric that stays above a line does not spam; first sight above the line fires once.
+38. **Prediction rule is deliberately simple** (India's share of the foreign peak keeps growing at its recent quarterly rate) so the tracker can state whether it beats "nothing changes". Live and back-test results are stored with an origin flag and never mixed; sample results are labelled as plumbing checks.
+39. **Back-test hides the last 26 weeks of a trend's own history**, predicts from the truncated series and compares with the stage the full series shows; confidence used is the latest stored score's (a stated simplification).
+40. **Workflow services (alerts, predictions, report gathering) live in `packages/db/src/services`** so the API and the workers share one implementation; pure logic stays in `packages/shared` and is unit-tested.
+41. **Report email uses your own SMTP** (Rs 0); without it the report is download-only. PDF is generated with pdfkit (plain text layout, no browser needed).
+42. **CSV export neutralises spreadsheet formulas** by prefixing cells that start with = + - @.

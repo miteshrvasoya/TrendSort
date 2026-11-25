@@ -1,6 +1,6 @@
 {
   "name": "@trendbridge/api",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -27,10 +27,12 @@
     "fastify": "^5.1.0",
     "fastify-type-provider-zod": "^4.0.2",
     "ioredis": "^5.11.1",
+    "pdfkit": "^0.21.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
-    "@types/node": "^22.9.0"
+    "@types/node": "^22.9.0",
+    "@types/pdfkit": "^0.17.7"
   }
 }

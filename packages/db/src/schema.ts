@@ -366,9 +366,56 @@ export const pipelineItems = pgTable("pipeline_items", {
     .notNull()
     .references(() => users.id),
   trendId: integer("trend_id").references(() => trendEntities.id),
+  /** idea title when there is no trend yet (or an override of the trend name) */
+  title: text("title"),
   stage: varchar("stage", { length: 30 }).notNull().default("spotted"),
   notes: text("notes"),
+  /** supplier quotes: [{supplier, price, currency, moq, note, date}] */
+  quotes: jsonb("quotes").$type<Record<string, unknown>[]>().notNull().default([]),
+  results: text("results"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const pipelineEvents = pgTable("pipeline_events", {
+  id: serial("id").primaryKey(),
+  itemId: integer("item_id")
+    .notNull()
+    .references(() => pipelineItems.id, { onDelete: "cascade" }),
+  fromStage: varchar("from_stage", { length: 30 }),
+  toStage: varchar("to_stage", { length: 30 }).notNull(),
+  at: timestamp("at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+/** A fired alert, shown in the bell and the Alerts page. One per (alert, trend, day). */
+export const alertEvents = pgTable(
+  "alert_events",
+  {
+    id: serial("id").primaryKey(),
+    alertId: integer("alert_id")
+      .notNull()
+      .references(() => alerts.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id),
+    trendId: integer("trend_id")
+      .notNull()
+      .references(() => trendEntities.id, { onDelete: "cascade" }),
+    message: text("message").notNull(),
+    fingerprint: varchar("fingerprint", { length: 80 }).notNull(),
+    seen: boolean("seen").notNull().default(false),
+    firedAt: timestamp("fired_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex("alert_events_uq").on(t.alertId, t.trendId, t.fingerprint)],
+);
+
+export const reports = pgTable("reports", {
+  id: serial("id").primaryKey(),
+  weekOf: date("week_of").notNull(),
+  mode: varchar("mode", { length: 10 }).notNull(), // real | sample
+  payload: jsonb("payload").notNull(),
+  emailedAt: timestamp("emailed_at", { withTimezone: true }),
+  generatedAt: timestamp("generated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
 export const predictions = pgTable("predictions", {
@@ -380,6 +427,14 @@ export const predictions = pgTable("predictions", {
   horizonDate: date("horizon_date").notNull(),
   actualStage: varchar("actual_stage", { length: 30 }),
   confidence: doublePrecision("confidence"),
+  /** live = made by the scoring job and resolved later; backtest = replayed on historical series, resolved immediately */
+  origin: varchar("origin", { length: 10 }).notNull().default("live"),
+  isSample: boolean("is_sample").notNull().default(false),
+  algorithmVersion: varchar("algorithm_version", { length: 20 }),
+  basis: jsonb("basis").notNull().default({}),
+  resolvedAt: timestamp("resolved_at", { withTimezone: true }),
+  hit: varchar("hit", { length: 10 }), // exact | near | miss
+  stageError: integer("stage_error"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 

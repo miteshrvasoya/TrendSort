@@ -15,6 +15,7 @@ import {
 import type { Config } from "./config";
 import { authRoutes } from "./routes/auth";
 import { versionRoutes } from "./routes/versions";
+import { analyticsRoutes } from "./routes/analytics";
 import { economicsRoutes } from "./routes/economics";
 import { giftRoutes } from "./routes/gifts";
 import { marketRoutes } from "./routes/market";
@@ -22,6 +23,7 @@ import { importRoutes } from "./routes/import";
 import { scoringRoutes } from "./routes/scoring";
 import { sourceRoutes } from "./routes/sources";
 import { verticalRoutes } from "./routes/verticals";
+import { workflowRoutes } from "./routes/workflow";
 import { trendRoutes } from "./routes/trends";
 
 declare module "fastify" {
@@ -75,6 +77,8 @@ export async function buildApp(opts: { db: Db; config: Config; logger?: boolean 
   await app.register(economicsRoutes);
   await app.register(marketRoutes);
   await app.register(verticalRoutes);
+  await app.register(workflowRoutes);
+  await app.register(analyticsRoutes);
   await app.register(trendRoutes);
   return app;
 }

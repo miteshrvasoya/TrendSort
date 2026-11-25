@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { GiftProfileDialog } from "@/components/gift-profile-dialog";
+import { TrendActions } from "@/components/trend-actions";
 import {
   EconomicsSummary,
   FitPanel,
@@ -148,6 +149,7 @@ export default function TrendDetail() {
           tracking its keywords.
         </p>
       )}
+      {d && <TrendActions trendId={d.id} />}
       {d && !sample && (
         <StaleWarning iso={lastLive ? `${lastLive}T00:00:00Z` : null} label="Search interest" />
       )}

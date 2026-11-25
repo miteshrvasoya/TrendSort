@@ -1,6 +1,6 @@
 {
   "name": "@trendbridge/workers",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -10,7 +10,9 @@
     "test": "vitest run",
     "run-once": "tsx src/run-once.ts",
     "score-now": "tsx src/score-now.ts",
-    "measure-lag": "tsx src/measure-lag.ts"
+    "measure-lag": "tsx src/measure-lag.ts",
+    "backtest-predictions": "tsx src/backtest-predictions-cli.ts",
+    "weekly-report": "tsx src/weekly-report-cli.ts"
   },
   "dependencies": {
     "@bull-board/api": "^6.5.0",
@@ -24,9 +26,11 @@
     "fastify": "^5.1.0",
     "google-trends-api": "^4.9.2",
     "ioredis": "^5.4.1",
+    "nodemailer": "^10.6.1",
     "pino": "^9.5.0"
   },
   "devDependencies": {
-    "@types/node": "^22.9.0"
+    "@types/node": "^22.9.0",
+    "@types/nodemailer": "^8.0.2"
   }
 }

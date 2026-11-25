@@ -14,6 +14,28 @@ export interface ReleaseNote {
 
 export const RELEASES: ReleaseNote[] = [
   {
+    version: "0.7.0",
+    date: "2026-11-30",
+    title: "Reports, alerts, pipeline and the prediction tracker",
+    summary:
+      "The working layer: a weekly intelligence report, alerts that fire on crossings, watchlists, an idea pipeline from Spotted to Scaling, a prediction tracker that tests the model against reality, and an analytics page with charts and CSV/PDF export.",
+    added: [
+      "Weekly intelligence report: top 10 opportunities, new entrants, rising and fading trends, India stage changes, upcoming gifting windows, alerts, pipeline and suggested actions; generated every Monday, downloadable as PDF or Markdown, emailed if you add SMTP details",
+      "Alerts: Opportunity crosses a score, India search starts rising, India stage advances; for one trend, a watchlist or all live trends; fire once per crossing; bell with unseen count",
+      "Watchlists with current Opportunity and week-on-week change; Watch, Add to pipeline and Alert buttons on every trend page",
+      "Idea pipeline board (Spotted, Researching, Sourcing, Sample ordered, Listed, Scaling, Dropped) with drag and drop, notes, supplier quotes, results, stage history and stuck-idea flags",
+      "Prediction tracker: records the expected India stage in 6 months, resolves it when the date arrives, shows hit rate, bias, calibration by confidence, and whether the model beats 'nothing changes'; plus a back-test on historical series",
+      "Analytics: opportunity matrix, country heatmap, rising stars, category treemap, marketplace movers",
+      "CSV export of trends, pipeline and predictions (formula-safe); PDF and Markdown report downloads",
+      "Sidebar grouped into Discover, Decide, Workflow and Data",
+    ],
+    changed: ["Scoring runs now also record predictions, resolve due ones and check alerts"],
+    fixed: [],
+    removed: [],
+    forYou:
+      "Instead of re-checking everything, you now get a Monday summary, a bell when something crosses your line, and a board to move ideas from spotted to selling. The prediction tracker is how you learn whether to trust the model: live predictions take 6 months to resolve, so use the back-test now and the live record later. On sample data it only proves the machinery works.",
+  },
+  {
     version: "0.6.0",
     date: "2026-11-29",
     title: "Config-driven verticals and the RO deep-dive",

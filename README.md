@@ -1,6 +1,6 @@
 # TrendBridge
 
-Finds products trending abroad before they peak in India, scores India-readiness, and compares import vs Indian-manufacture economics. Free data only (Rs 0). Current version: **0.6.0 (Phase 5: Config-driven verticals and the RO deep-dive)**. See `docs/PROPOSAL.md` for the full design.
+Finds products trending abroad before they peak in India, scores India-readiness, and compares import vs Indian-manufacture economics. Free data only (Rs 0). Current version: **0.7.0 (Phase 6: Reports, alerts, pipeline and prediction tracker)**. See `docs/PROPOSAL.md` for the full design.
 
 ## Run locally (about 10 minutes)
 
@@ -50,6 +50,13 @@ Open a trend, then **Unit economics → Open calculator**. Defaults come from **
 ## Verticals and the RO deep-dive (Phase 5)
 
 Open **Verticals → Water Purification / RO → Track starter set**, run Google Trends from the Source Registry, then **Re-score all**. The feature-gap matrix, water-type guide and subscription calculator are on that page. Vertical definitions live in `packages/shared/src/data/verticals/*.json` (see `docs/VERTICALS.md`).
+
+## Reports, alerts, pipeline and predictions (Phase 6)
+
+- **Weekly report:** generated Mondays 05:30 UTC while `pnpm dev:workers` runs; **Reports → Generate now** any time, or `pnpm --filter @trendbridge/workers weekly-report`. To email it, fill the `SMTP_*` and `REPORT_EMAIL_TO` lines in `.env` (your own SMTP: free with e.g. a Gmail app password).
+- **Alerts** are checked after every scoring run (and via **Alerts → Check now**).
+- **Prediction tracker:** live predictions are recorded by scoring runs and resolved 6 months later. To see how the rule performs now, run the back-test: **Predictions → Run back-test** or `pnpm --filter @trendbridge/workers backtest-predictions` (needs the analytics service).
+- See `docs/WORKFLOW.md`.
 
 ## Test
 

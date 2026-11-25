@@ -465,3 +465,140 @@ export interface FeatureMatrix {
   waterProfiles: NonNullable<import("@trendbridge/shared").VerticalConfig["waterProfiles"]>;
   note: string;
 }
+
+/** Downloads a file from the API (cookie auth) via a temporary link. */
+export async function downloadFile(path: string, filename: string): Promise<void> {
+  const res = await fetch(`${API_URL}${path}`, { credentials: "include" });
+  if (!res.ok) throw new ApiError(res.status, "Download failed");
+  const url = URL.createObjectURL(await res.blob());
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+export interface TrendCard {
+  id: number;
+  name: string;
+  isSample: boolean;
+  opportunity: number | null;
+  stage: string | null;
+  delta: number | null;
+}
+export interface WatchlistRow {
+  id: number;
+  name: string;
+  trends: TrendCard[];
+}
+export interface AlertRow {
+  id: number;
+  rule: { type: string; threshold?: number; scope: string; watchlistId?: number };
+  active: boolean;
+  lastFiredAt: string | null;
+  trendId: number | null;
+  trendName: string | null;
+  watchlistName: string | null;
+}
+export interface AlertEvent {
+  id: number;
+  trendId: number;
+  message: string;
+  seen: boolean;
+  firedAt: string;
+}
+export interface Quote {
+  supplier: string;
+  price: number | null;
+  currency: string;
+  moq: number | null;
+  note: string;
+  date: string;
+}
+export interface PipelineItem {
+  id: number;
+  trendId: number | null;
+  title: string;
+  stage: string;
+  notes: string | null;
+  quotes: Quote[];
+  results: string | null;
+  updatedAt: string;
+  createdAt: string;
+  stuck: boolean;
+  trend: TrendCard | null;
+}
+export interface PredictionRow {
+  id: number;
+  trendId: number;
+  trend: string;
+  origin: string;
+  isSample: boolean;
+  predictedStage: string;
+  actualStage: string | null;
+  hit: string | null;
+  stageError: number | null;
+  horizonDate: string;
+  confidence: number | null;
+  createdAt: string;
+}
+export type Summary = import("@trendbridge/shared").PredictionSummary;
+export interface TrackerSummary {
+  live: Summary & { pending: number; sample: boolean };
+  backtest: { real: Summary; sample: Summary };
+}
+export interface ReportListRow {
+  id: number;
+  weekOf: string;
+  mode: string;
+  generatedAt: string;
+  emailedAt: string | null;
+}
+export interface ReportResponse {
+  id: number;
+  weekOf: string;
+  mode: string;
+  generatedAt: string;
+  emailedAt: string | null;
+  report: import("@trendbridge/shared").Report;
+}
+export interface AnalyticsOverview {
+  count: number;
+  scored: number;
+  matrix: {
+    id: number;
+    name: string;
+    x: number;
+    y: number;
+    z: number;
+    sizeBasis: string;
+    isSample: boolean;
+    stage: string | null;
+    opportunity: number | null;
+  }[];
+  heatmap: {
+    countries: string[];
+    rows: { id: number; name: string; isSample: boolean; cells: (number | null)[] }[];
+  };
+  risingStars: {
+    id: number;
+    name: string;
+    momentum: number | null;
+    stage: string | null;
+    opportunity: number | null;
+    isSample: boolean;
+  }[];
+  treemap: { name: string; size: number; avgOpportunity: number | null }[];
+  movers: { risers: Mover[]; fallers: Mover[]; tracked: number };
+}
+export interface Mover {
+  id: number;
+  title: string;
+  marketplace: string;
+  country: string | null;
+  url: string | null;
+  rank: number;
+  prevRank: number;
+  change: number;
+  listType: string | null;
+}
