@@ -168,6 +168,9 @@ export const trendEntities = pgTable(
     occasionKeys: jsonb("occasion_keys").$type<string[]>().notNull().default([]),
     priceBandInr: text("price_band_inr"),
     targetBuyer: text("target_buyer"),
+    /** tracked = user/seed-defined; candidate = auto-created from signals, awaiting review */
+    status: varchar("status", { length: 20 }).notNull().default("tracked"),
+    origin: varchar("origin", { length: 20 }).notNull().default("user"),
     embedding: vector("embedding"),
     ...provenance,
   },
@@ -212,6 +215,21 @@ export const products = pgTable(
   (t) => [uniqueIndex("products_mk_ext").on(t.marketplace, t.externalId)],
 );
 
+export const trackedKeywords = pgTable(
+  "tracked_keywords",
+  {
+    id: serial("id").primaryKey(),
+    trendId: integer("trend_id")
+      .notNull()
+      .references(() => trendEntities.id, { onDelete: "cascade" }),
+    term: text("term").notNull(),
+    geos: jsonb("geos").$type<string[]>().notNull().default(["US", "IN"]),
+    active: boolean("active").notNull().default(true),
+    lastFetchedAt: timestamp("last_fetched_at", { withTimezone: true }),
+  },
+  (t) => [uniqueIndex("tracked_kw_uq").on(t.trendId, t.term)],
+);
+
 export const productSnapshots = pgTable(
   "product_snapshots",
   {
@@ -224,6 +242,8 @@ export const productSnapshots = pgTable(
     rating: doublePrecision("rating"),
     reviewCount: integer("review_count"),
     bsr: integer("bsr"),
+    listType: varchar("list_type", { length: 30 }),
+    categoryPath: text("category_path"),
     ...provenance,
   },
   (t) => [index("product_snapshots_p_idx").on(t.productId, t.fetchedAt)],

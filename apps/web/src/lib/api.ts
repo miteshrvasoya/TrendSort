@@ -50,6 +50,11 @@ export interface TrendRow {
   lagMonths: number | null;
   confidence: number | null;
   algorithmVersion: string | null;
+  status: string;
+  origin: string;
+  newsCount: number;
+  productCount: number;
+  lastSignalAt: string | null;
 }
 export interface SourceRow {
   id: number;
@@ -69,6 +74,40 @@ export interface SourceRow {
   lastSuccessAt: string | null;
   lastError: string | null;
   confidenceLevel: string;
+  implemented: boolean;
+  runnable: boolean;
+}
+export interface NewsRow {
+  id: number;
+  trendId: number | null;
+  headline: string;
+  publisher: string | null;
+  publishedAt: string | null;
+  url: string;
+}
+export interface ProductRow {
+  id: number;
+  marketplace: string;
+  country: string;
+  title: string;
+  url: string | null;
+  price: number | null;
+  currency: string | null;
+  rating: number | null;
+  reviewCount: number | null;
+  rank: number | null;
+  prevRank: number | null;
+  listType: string | null;
+  fetchedAt: string;
+  scraped: boolean | null;
+}
+export interface RunRow {
+  id: number;
+  source: string;
+  status: string;
+  startedAt: string;
+  items: number;
+  error: string | null;
 }
 export interface VersionRow {
   version: string;

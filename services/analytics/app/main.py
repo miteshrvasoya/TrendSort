@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 
 from .leadlag import lead_lag
 
-app = FastAPI(title="TrendBridge Analytics", version="0.1.0")
+app = FastAPI(title="TrendBridge Analytics", version="0.2.0")
 
 
 class LeadLagRequest(BaseModel):
@@ -15,7 +15,7 @@ class LeadLagRequest(BaseModel):
 
 @app.get("/health")
 def health():
-    return {"ok": True, "version": "0.1.0"}
+    return {"ok": True, "version": "0.2.0"}
 
 
 @app.post("/lead-lag")

@@ -2,10 +2,9 @@
 import { createDb } from "@trendbridge/db";
 import { CONNECTORS } from "./connectors";
 import { runConnector } from "./framework/runner";
-import type { Connector } from "./framework/types";
 
 const key = process.argv[2] ?? "ecb_fx";
-const c = CONNECTORS[key] as Connector | undefined;
+const c = CONNECTORS[key];
 if (!c) {
   console.error(`unknown connector ${key}; have: ${Object.keys(CONNECTORS).join(", ")}`);
   process.exit(1);

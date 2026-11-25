@@ -5,6 +5,7 @@ import rateLimit from "@fastify/rate-limit";
 import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
 import type { Db } from "@trendbridge/db";
+import { CURRENT_VERSION } from "@trendbridge/shared";
 import Fastify from "fastify";
 import {
   serializerCompiler,
@@ -14,6 +15,7 @@ import {
 import type { Config } from "./config";
 import { authRoutes } from "./routes/auth";
 import { versionRoutes } from "./routes/versions";
+import { importRoutes } from "./routes/import";
 import { sourceRoutes } from "./routes/sources";
 import { trendRoutes } from "./routes/trends";
 
@@ -58,10 +60,11 @@ export async function buildApp(opts: { db: Db; config: Config; logger?: boolean 
     }
   });
 
-  app.get("/health", async () => ({ ok: true, version: "0.1.0" }));
+  app.get("/health", async () => ({ ok: true, version: CURRENT_VERSION }));
   await app.register(authRoutes);
   await app.register(versionRoutes);
   await app.register(sourceRoutes);
+  await app.register(importRoutes);
   await app.register(trendRoutes);
   return app;
 }

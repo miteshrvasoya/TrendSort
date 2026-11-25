@@ -21,7 +21,10 @@ describe("versioning", () => {
     expect(TOUR_STEPS.some((s) => s.version === CURRENT_VERSION)).toBe(true);
   });
   it("returning users only see new steps", () => {
-    expect(stepsFor({ sinceVersion: "0.1.0" })).toHaveLength(0);
+    expect(stepsFor({ sinceVersion: CURRENT_VERSION })).toHaveLength(0);
+    expect(stepsFor({ sinceVersion: "0.1.0" }).every((s) => s.version === CURRENT_VERSION)).toBe(
+      true,
+    );
     expect(stepsFor({ sinceVersion: null }).length).toBe(TOUR_STEPS.length);
   });
   it("new badge lasts two releases", () => {

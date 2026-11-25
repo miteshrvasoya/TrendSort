@@ -3,13 +3,19 @@ import { Redis } from "ioredis";
 import type { Db } from "@trendbridge/db";
 import { CONNECTORS } from "./connectors";
 import { runConnector, type RunnerEnv } from "./framework/runner";
-import type { Connector } from "./framework/types";
 
 export const INGEST = "ingest";
 export const INGEST_DLQ = "ingest-dlq";
 
 /** Cron-like schedules per source (free-tier friendly). */
-export const SCHEDULES: Record<string, string> = { ecb_fx: "0 6 * * *" };
+export const SCHEDULES: Record<string, string> = {
+  ecb_fx: "0 6 * * *",
+  google_trends: "30 2 * * *", // daily, off-peak
+  google_trends_rss: "15 */6 * * *",
+  google_news_rss: "0 */8 * * *",
+  trade_press_rss: "20 */6 * * *",
+  amazon_bestsellers: "10 3 * * *", // no-op while the source is disabled in the registry
+};
 
 export function makeRedis(url: string) {
   return new Redis(url, { maxRetriesPerRequest: null });
@@ -43,7 +49,7 @@ export function startWorker(opts: {
   const worker = new Worker(
     INGEST,
     async (job: Job<{ sourceKey: string }>) => {
-      const c = CONNECTORS[job.data.sourceKey] as Connector | undefined;
+      const c = CONNECTORS[job.data.sourceKey];
       if (!c) throw new Error(`No connector for ${job.data.sourceKey}`);
       const res = await runConnector(opts.db, c, opts.env, opts.log);
       if (res.status === "error") throw new Error(res.reason); // triggers BullMQ retry

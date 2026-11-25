@@ -1,0 +1,26 @@
+[
+  {
+    "feed": "Inc42",
+    "items": [
+      {
+        "title": "D2C brand launches countertop water purifier with zero reject water",
+        "link": "https://example.com/inc1",
+        "publishedAt": "2026-11-15T06:00:00.000Z",
+        "source": "Inc42",
+        "feed": "Inc42"
+      }
+    ]
+  },
+  {
+    "feed": "Retail Dive",
+    "items": [
+      {
+        "title": "Personalized gifts drive holiday sales growth, survey finds",
+        "link": "https://example.com/rd1",
+        "publishedAt": "2026-11-16T06:00:00.000Z",
+        "source": "Retail Dive",
+        "feed": "Retail Dive"
+      }
+    ]
+  }
+]

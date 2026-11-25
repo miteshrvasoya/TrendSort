@@ -1,0 +1,35 @@
+[
+  {
+    "query": "personalised star map gift",
+    "geo": "US",
+    "items": [
+      {
+        "title": "Why personalised star maps are topping gift guides this season",
+        "link": "https://example.com/a1",
+        "publishedAt": "2026-11-10T08:00:00.000Z",
+        "source": "Example Gift Weekly",
+        "feed": "google-news:US"
+      },
+      {
+        "title": "Personalised star map prints: the anniversary gift trend",
+        "link": "https://example.com/a2",
+        "publishedAt": "2026-11-12T08:00:00.000Z",
+        "source": "Example Home",
+        "feed": "google-news:US"
+      }
+    ]
+  },
+  {
+    "query": "water purifier trends",
+    "geo": "IN",
+    "items": [
+      {
+        "title": "Countertop RO purifiers gain ground in Indian metros",
+        "link": "https://example.com/in1",
+        "publishedAt": "2026-11-14T08:00:00.000Z",
+        "source": "Example Retail India",
+        "feed": "google-news:IN"
+      }
+    ]
+  }
+]

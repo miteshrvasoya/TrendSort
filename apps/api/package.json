@@ -1,6 +1,6 @@
 {
   "name": "@trendbridge/api",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -21,9 +21,12 @@
     "@trendbridge/db": "workspace:*",
     "@trendbridge/shared": "workspace:*",
     "bcryptjs": "^2.4.3",
+    "bullmq": "^5.81.6",
+    "csv-parse": "^7.0.3",
     "drizzle-orm": "^0.36.4",
     "fastify": "^5.1.0",
     "fastify-type-provider-zod": "^4.0.2",
+    "ioredis": "^5.11.1",
     "zod": "^3.23.8"
   },
   "devDependencies": {

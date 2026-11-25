@@ -1,6 +1,6 @@
 # TrendBridge
 
-Finds products trending abroad before they peak in India, scores India-readiness, and compares import vs Indian-manufacture economics. Free data only (Rs 0). Current version: **0.1.0 (Phase 0: Foundations)**. See `docs/PROPOSAL.md` for the full design.
+Finds products trending abroad before they peak in India, scores India-readiness, and compares import vs Indian-manufacture economics. Free data only (Rs 0). Current version: **0.2.0 (Phase 1: Signals MVP)**. See `docs/PROPOSAL.md` for the full design.
 
 ## Run locally (about 10 minutes)
 
@@ -19,6 +19,15 @@ pnpm dev:web        # http://localhost:3000
 Sign in with `admin@trendbridge.local` / `admin123` (sample admin; change in `.env`).
 
 Fetch a live free source once, without the queue: `pnpm --filter @trendbridge/workers run-once ecb_fx`. Set `LIVE_FETCH_ENABLED=false` to use fixtures only.
+
+## Getting real data (Phase 1)
+
+1. Sign in, open **Trend Explorer → Track a trend** and add a trend with keywords (e.g. `star map frame, custom night sky print`).
+2. Make sure `pnpm dev:workers` is running (needs Redis). Open **Source Registry** and click **Run now** on Google Trends, Google News RSS and the trade-press feeds. They also run on a schedule.
+3. Optional: switch on **Amazon Best Sellers** (scraped, off by default; robots.txt is enforced, blocks are never bypassed). Or use **Import** to load a CSV from a free browser tool.
+4. Google Trends is an unofficial API and may rate-limit (429); the circuit breaker pauses it for 30 minutes after 3 failures.
+
+Run one connector without the queue: `pnpm --filter @trendbridge/workers run-once google_news_rss`. Set `LIVE_FETCH_ENABLED=false` for fixture mode.
 
 ## Test
 

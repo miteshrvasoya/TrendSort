@@ -72,7 +72,7 @@ describe("versions & tour", () => {
 
 describe("data", () => {
   it("lists at least 30 sample trends flagged as sample", async () => {
-    const rows = (await get("/trends")).json();
+    const rows = (await get("/trends?data=sample")).json();
     expect(rows.length).toBeGreaterThanOrEqual(30);
     expect(rows.every((r: { isSample: boolean }) => r.isSample)).toBe(true);
   });

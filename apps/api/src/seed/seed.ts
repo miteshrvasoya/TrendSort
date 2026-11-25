@@ -83,7 +83,7 @@ export async function seedReference(db: Db) {
       .onConflictDoNothing();
   }
   for (const s of SOURCE_CATALOG) {
-    const enabled = s.key !== "sample_seed" || true;
+    const enabled = !s.scraped; // scraped sources are opt-in
     await db
       .insert(sources)
       .values({

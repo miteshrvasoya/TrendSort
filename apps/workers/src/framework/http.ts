@@ -75,6 +75,12 @@ export class PoliteHttp {
       .values({ actor: "worker", action, url, sourceKey: this.sourceKey, detail });
   }
 
+  /** For calls made by third-party client libraries (e.g. the Google Trends wrapper): count + audit them. */
+  async recordExternal(url: string, detail: object = {}) {
+    this.calls++;
+    await this.audit("fetch", url, { external: true, ...detail });
+  }
+
   async get(
     url: string,
     init: { headers?: Record<string, string>; skipRobots?: boolean } = {},
