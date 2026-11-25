@@ -2,6 +2,9 @@ import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import pg from "pg";
+import { loadEnv } from "./env";
+
+loadEnv();
 
 /** Tiny SQL-file migrator: applies migrations/*.sql in order, once each. */
 export async function migrate(url = process.env.DATABASE_URL) {

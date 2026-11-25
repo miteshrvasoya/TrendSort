@@ -5,10 +5,6 @@ import * as schema from "./schema";
 export function createDb(url = process.env.DATABASE_URL) {
   if (!url) throw new Error("DATABASE_URL is not set");
 
-  url = "postgres://postgres:root@localhost:5432/trendbridge";
-
-  console.log("Database URL 2: ", url);
-
   const pool = new pg.Pool({ connectionString: url, max: 10 });
   const db = drizzle(pool, { schema });
   return { db, pool };

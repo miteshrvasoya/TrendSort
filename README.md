@@ -7,7 +7,7 @@ Finds products trending abroad before they peak in India, scores India-readiness
 Prereqs: Node 22, pnpm 10, Docker (or local Postgres 16 with pgvector and Redis 7), Python 3.12 optional.
 
 ```bash
-cp .env.example .env
+cp .env.example .env     # set DATABASE_URL here if your Postgres password is not `postgres`
 docker compose up -d postgres redis      # add `analytics` to also run the Python service
 pnpm install
 pnpm db:migrate && pnpm db:seed          # creates schema, sample data, admin user
