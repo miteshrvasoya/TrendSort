@@ -1,0 +1,23 @@
+[
+  {
+    "country": "US",
+    "host": "www.amazon.com",
+    "listType": "bestsellers",
+    "category": "all",
+    "html": "<html><body><div id=\"gridItemRoot\"><div class=\"zg-grid-general-faceout\"><span class=\"zg-bdg-text\">#1</span>\n<a class=\"a-link-normal\" href=\"/Some-Title/dp/B0CXYZ0001/ref=zg_bs_1\"><img alt=\"Personalized Star Map Frame Custom Night Sky Print Gift\" src=\"https://m.media-amazon.com/images/I/B0CXYZ0001.jpg\"><div class=\"_cDEzb_p13n-sc-css-line-clamp-3_g3dy1\">Personalized Star Map Frame Custom Night Sky Print Gift</div></a>\n<div class=\"a-icon-row\"><a href=\"/product-reviews/B0CXYZ0001/ref=cr_customerReviews\"><i class=\"a-icon a-icon-star-small\"><span class=\"a-icon-alt\">4.7 out of 5 stars</span></i><span class=\"a-size-small\">2,210</span></a></div>\n<span class=\"p13n-sc-price\">$34.99</span></div></div><div id=\"gridItemRoot\"><div class=\"zg-grid-general-faceout\"><span class=\"zg-bdg-text\">#2</span>\n<a class=\"a-link-normal\" href=\"/Some-Title/dp/B0CXYZ0002/ref=zg_bs_2\"><img alt=\"Stanley Quencher H2.0 FlowState Tumbler 40 oz\" src=\"https://m.media-amazon.com/images/I/B0CXYZ0002.jpg\"><div class=\"_cDEzb_p13n-sc-css-line-clamp-3_g3dy1\">Stanley Quencher H2.0 FlowState Tumbler 40 oz</div></a>\n<div class=\"a-icon-row\"><a href=\"/product-reviews/B0CXYZ0002/ref=cr_customerReviews\"><i class=\"a-icon a-icon-star-small\"><span class=\"a-icon-alt\">4.8 out of 5 stars</span></i><span class=\"a-size-small\">98,211</span></a></div>\n<span class=\"p13n-sc-price\">$35.0</span></div></div><div id=\"gridItemRoot\"><div class=\"zg-grid-general-faceout\"><span class=\"zg-bdg-text\">#3</span>\n<a class=\"a-link-normal\" href=\"/Some-Title/dp/B0CXYZ0003/ref=zg_bs_3\"><img alt=\"Silicone Air Fryer Liners Reusable 4 Pack\" src=\"https://m.media-amazon.com/images/I/B0CXYZ0003.jpg\"><div class=\"_cDEzb_p13n-sc-css-line-clamp-3_g3dy1\">Silicone Air Fryer Liners Reusable 4 Pack</div></a>\n<div class=\"a-icon-row\"><a href=\"/product-reviews/B0CXYZ0003/ref=cr_customerReviews\"><i class=\"a-icon a-icon-star-small\"><span class=\"a-icon-alt\">4.5 out of 5 stars</span></i><span class=\"a-size-small\">15,320</span></a></div>\n<span class=\"p13n-sc-price\">$12.99</span></div></div></body></html>"
+  },
+  {
+    "country": "US",
+    "host": "www.amazon.com",
+    "listType": "movers-and-shakers",
+    "category": "all",
+    "html": "<html><body><div id=\"gridItemRoot\"><div class=\"zg-grid-general-faceout\"><span class=\"zg-bdg-text\">#1</span>\n<a class=\"a-link-normal\" href=\"/Some-Title/dp/B0CXYZ0004/ref=zg_bs_1\"><img alt=\"Countertop Reverse Osmosis Water Purifier No Installation, 5-Stage\" src=\"https://m.media-amazon.com/images/I/B0CXYZ0004.jpg\"><div class=\"_cDEzb_p13n-sc-css-line-clamp-3_g3dy1\">Countertop Reverse Osmosis Water Purifier No Installation, 5-Stage</div></a>\n<div class=\"a-icon-row\"><a href=\"/product-reviews/B0CXYZ0004/ref=cr_customerReviews\"><i class=\"a-icon a-icon-star-small\"><span class=\"a-icon-alt\">4.4 out of 5 stars</span></i><span class=\"a-size-small\">812</span></a></div>\n<span class=\"p13n-sc-price\">$249.0</span></div></div><div id=\"gridItemRoot\"><div class=\"zg-grid-general-faceout\"><span class=\"zg-bdg-text\">#2</span>\n<a class=\"a-link-normal\" href=\"/Some-Title/dp/B0CXYZ0005/ref=zg_bs_2\"><img alt=\"Mushroom Coffee Gift Set Lion's Mane Instant, 12 Count\" src=\"https://m.media-amazon.com/images/I/B0CXYZ0005.jpg\"><div class=\"_cDEzb_p13n-sc-css-line-clamp-3_g3dy1\">Mushroom Coffee Gift Set Lion's Mane Instant, 12 Count</div></a>\n<div class=\"a-icon-row\"><a href=\"/product-reviews/B0CXYZ0005/ref=cr_customerReviews\"><i class=\"a-icon a-icon-star-small\"><span class=\"a-icon-alt\">4.3 out of 5 stars</span></i><span class=\"a-size-small\">5,120</span></a></div>\n<span class=\"p13n-sc-price\">$29.99</span></div></div></body></html>"
+  },
+  {
+    "country": "GB",
+    "host": "www.amazon.co.uk",
+    "listType": "new-releases",
+    "category": "all",
+    "html": "<html><body><div id=\"gridItemRoot\"><div class=\"zg-grid-general-faceout\"><span class=\"zg-bdg-text\">#1</span>\n<a class=\"a-link-normal\" href=\"/Some-Title/dp/B0CXYZ0006/ref=zg_bs_1\"><img alt=\"Smart Ring Health Tracker Sleep Monitor\" src=\"https://m.media-amazon.com/images/I/B0CXYZ0006.jpg\"><div class=\"_cDEzb_p13n-sc-css-line-clamp-3_g3dy1\">Smart Ring Health Tracker Sleep Monitor</div></a>\n<div class=\"a-icon-row\"><a href=\"/product-reviews/B0CXYZ0006/ref=cr_customerReviews\"><i class=\"a-icon a-icon-star-small\"><span class=\"a-icon-alt\">4.1 out of 5 stars</span></i><span class=\"a-size-small\">230</span></a></div>\n<span class=\"p13n-sc-price\">$89.0</span></div></div></body></html>"
+  }
+]

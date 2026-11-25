@@ -1,6 +1,8 @@
 "use client";
 import { SampleBanner } from "@/components/sample-banner";
+import { TrackTrendDialog } from "@/components/track-trend-dialog";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { api, type TrendRow } from "@/lib/api";
 import { STAGE_LABEL, fmtScore } from "@/lib/utils";
@@ -13,12 +15,12 @@ import {
   useReactTable,
   type SortingState,
 } from "@tanstack/react-table";
-import { ArrowDownUp } from "lucide-react";
+import { ArrowDownUp, Plus } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
 const VERTICALS = [
-  ["", "All"],
+  ["", "All verticals"],
   ["gifts", "Gifts"],
   ["ro", "RO / Water"],
   ["home-kitchen", "Home & Kitchen"],
@@ -26,18 +28,25 @@ const VERTICALS = [
   ["pet", "Pet"],
   ["beauty", "Beauty"],
 ];
+const DATA = [
+  ["all", "All data"],
+  ["real", "Real only"],
+  ["sample", "Sample only"],
+  ["candidate", "Candidates"],
+] as const;
 const col = createColumnHelper<TrendRow>();
+const EMPTY: TrendRow[] = []; // stable reference: a fresh [] each render makes TanStack Table loop
 
 export default function TrendsPage() {
   const [vertical, setVertical] = useState("");
+  const [data, setData] = useState<(typeof DATA)[number][0]>("all");
   const [q, setQ] = useState("");
+  const [open, setOpen] = useState(false);
   const [sorting, setSorting] = useState<SortingState>([{ id: "opportunity", desc: true }]);
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["trends", vertical, q],
-    queryFn: () =>
-      api<TrendRow[]>(
-        `/trends?limit=200${vertical ? `&vertical=${vertical}` : ""}${q ? `&q=${encodeURIComponent(q)}` : ""}`,
-      ),
+  const params = `limit=200${vertical ? `&vertical=${vertical}` : ""}${q ? `&q=${encodeURIComponent(q)}` : ""}${data === "candidate" ? "&status=candidate" : data !== "all" ? `&data=${data}` : ""}`;
+  const query = useQuery({
+    queryKey: ["trends", params],
+    queryFn: () => api<TrendRow[]>(`/trends?${params}`),
   });
   const num = (
     label: string,
@@ -65,49 +74,79 @@ export default function TrendsPage() {
         cell: (c) => <Badge>{STAGE_LABEL[c.getValue() ?? ""] ?? "–"}</Badge>,
       }),
       num("Momentum", "momentum"),
-      num("Breadth", "breadth"),
-      num("Sustain.", "sustainability"),
-      num("Proof", "commercialProof"),
       num("Opportunity", "opportunity"),
-      col.accessor("lagMonths", { header: "Lag (mo)", cell: (c) => c.getValue() ?? "–" }),
-      col.accessor("priceBandInr", { header: "Price band" }),
+      col.accessor("newsCount", { header: "News" }),
+      col.accessor("productCount", { header: "Products" }),
+      col.accessor("lastSignalAt", {
+        header: "Last signal",
+        cell: (c) => (c.getValue() ? new Date(c.getValue()!).toLocaleDateString() : "–"),
+      }),
       col.display({
         id: "flag",
         header: "Data",
-        cell: (c) => (c.row.original.isSample ? <Badge tone="sample">Sample</Badge> : null),
+        cell: (c) => {
+          const r = c.row.original;
+          return r.isSample ? (
+            <Badge tone="sample">Sample</Badge>
+          ) : r.status === "candidate" ? (
+            <Badge tone="warn">Candidate</Badge>
+          ) : (
+            <Badge tone="ok">Live</Badge>
+          );
+        },
       }),
     ],
     [],
   );
   const table = useReactTable({
-    data: data ?? [],
+    data: query.data ?? EMPTY,
     columns,
     state: { sorting },
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
+  const sel = "rounded-lg border border-border bg-background px-2 py-1 text-sm";
 
   return (
     <>
-      <h1 className="text-2xl font-bold">Trend Explorer</h1>
-      <SampleBanner />
-      <div className="flex flex-wrap gap-2">
-        {VERTICALS.map(([k, l]) => (
-          <button
-            key={k}
-            onClick={() => setVertical(k!)}
-            className={`rounded-full border px-3 py-1 text-sm ${vertical === k ? "border-primary bg-primary/10 text-primary" : "border-border"}`}
-          >
-            {l}
-          </button>
-        ))}
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h1 className="text-2xl font-bold">Trend Explorer</h1>
+        <Button data-tour="track-trend" onClick={() => setOpen(true)}>
+          <Plus size={16} /> Track a trend
+        </Button>
+      </div>
+      {data !== "real" && data !== "candidate" && <SampleBanner />}
+      <div className="flex flex-wrap items-center gap-2">
+        <div data-tour="data-filter" className="flex gap-1">
+          {DATA.map(([k, l]) => (
+            <button
+              key={k}
+              onClick={() => setData(k)}
+              className={`rounded-full border px-3 py-1 text-sm ${data === k ? "border-primary bg-primary/10 text-primary" : "border-border"}`}
+            >
+              {l}
+            </button>
+          ))}
+        </div>
+        <select
+          aria-label="Vertical"
+          className={sel}
+          value={vertical}
+          onChange={(e) => setVertical(e.target.value)}
+        >
+          {VERTICALS.map(([k, l]) => (
+            <option key={k} value={k}>
+              {l}
+            </option>
+          ))}
+        </select>
         <input
           aria-label="Search trends"
           placeholder="Search…"
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          className="ml-auto rounded-lg border border-border bg-background px-3 py-1 text-sm"
+          className={`${sel} ml-auto`}
         />
       </div>
       <Card className="overflow-x-auto p-0" data-tour="trend-table">
@@ -143,16 +182,21 @@ export default function TrendsPage() {
             ))}
           </tbody>
         </table>
-        {isLoading && <p className="p-4 text-sm text-muted-foreground">Loading…</p>}
-        {isError && <p className="p-4 text-sm text-danger">Could not load trends.</p>}
-        {data && data.length === 0 && (
-          <p className="p-4 text-sm text-muted-foreground">No trends match. Try another filter.</p>
+        {query.isLoading && <p className="p-4 text-sm text-muted-foreground">Loading…</p>}
+        {query.isError && <p className="p-4 text-sm text-danger">Could not load trends.</p>}
+        {query.data?.length === 0 && (
+          <p className="p-4 text-sm text-muted-foreground">
+            {data === "real"
+              ? "No live trends yet. Click “Track a trend” to add one, or run a source."
+              : "No trends match this filter."}
+          </p>
         )}
       </Card>
       <p className="text-xs text-muted-foreground">
-        Scores are placeholders until the Phase 2 scoring model ships. Hover headers in later
-        versions for formulas.
+        Momentum and Opportunity are placeholders on sample data and blank for live trends until the
+        Phase 2 scoring model ships.
       </p>
+      <TrackTrendDialog open={open} onOpenChange={setOpen} />
     </>
   );
 }

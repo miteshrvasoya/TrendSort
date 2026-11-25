@@ -64,6 +64,42 @@ export const TOUR_STEPS: TourStepDef[] = [
     order: 6,
     route: "/",
   },
+  {
+    version: "0.2.0",
+    featureKey: "track-trend",
+    target: "[data-tour='track-trend']",
+    title: "Track a trend",
+    body: "Add a product idea with keywords and countries. Google Trends interest is fetched for it daily.",
+    order: 7,
+    route: "/trends",
+  },
+  {
+    version: "0.2.0",
+    featureKey: "data-filter",
+    target: "[data-tour='data-filter']",
+    title: "Real vs sample",
+    body: "Switch between real data, sample data and auto-created candidates.",
+    order: 8,
+    route: "/trends",
+  },
+  {
+    version: "0.2.0",
+    featureKey: "source-controls",
+    target: "[data-tour='source-table']",
+    title: "Enable and run sources",
+    body: "Switch a source on or off and run it now. Scraped sources start off; enable them only if you accept their terms risk.",
+    order: 9,
+    route: "/sources",
+  },
+  {
+    version: "0.2.0",
+    featureKey: "import",
+    target: "[data-tour='import-form']",
+    title: "Import your own data",
+    body: "Paste or upload a CSV/JSON export. Every row is validated before anything is saved.",
+    order: 10,
+    route: "/import",
+  },
 ];
 
 export function stepsFor(opts: { sinceVersion?: string | null; all?: boolean }): TourStepDef[] {

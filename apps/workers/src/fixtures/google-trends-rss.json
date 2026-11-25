@@ -1,0 +1,30 @@
+[
+  {
+    "geo": "US",
+    "items": [
+      {
+        "title": "mushroom coffee",
+        "link": "https://example.com/t1",
+        "publishedAt": "2026-11-20T00:00:00.000Z",
+        "approxTraffic": "20K+"
+      },
+      {
+        "title": "election results",
+        "link": "https://example.com/t2",
+        "publishedAt": "2026-11-20T00:00:00.000Z",
+        "approxTraffic": "2M+"
+      }
+    ]
+  },
+  {
+    "geo": "IN",
+    "items": [
+      {
+        "title": "diwali gift ideas",
+        "link": "https://example.com/t3",
+        "publishedAt": "2026-11-20T00:00:00.000Z",
+        "approxTraffic": "5K+"
+      }
+    ]
+  }
+]

@@ -67,6 +67,7 @@ export function TourController() {
           if (dir === "prev") i = Math.max(-1, i - 2);
         }
         await api("/tour/complete", { method: "POST" });
+        router.push("/"); // finish where we started
       } finally {
         active.current = false;
       }

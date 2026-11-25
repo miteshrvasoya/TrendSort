@@ -10,3 +10,8 @@
 8. **Scraping policy:** page-fetch connectors respect robots.txt (conservative if robots is unreachable), throttle per host, retry only 429/5xx, and never retry or bypass 401/403. Official APIs skip robots. Scraped sources are flagged lower confidence. Marketplace connectors that break terms of service ship disabled or manual-first; see `docs/PROPOSAL.md`.
 9. **Sample data** is always `is_sample = true` with placeholder `algorithm_version = sample-0`; the UI labels it everywhere.
 10. **Drizzle 0.36** pinned for drizzle-kit compatibility.
+11. **Phase 1 entity matching is lexical** (tokens, containment, Jaccard 0.6). Single-word terms never create candidates. Embedding clustering waits for Phase 2.
+12. **Candidates only from Movers & Shakers**, not every bestseller, to avoid flooding the trend list; they need approval before their keywords are tracked.
+13. **Sample entities are excluded from live matching** so synthetic and real data never mix.
+14. **Fixtures are hand-written approximations** of feed/page formats (the build sandbox blocked all external hosts), not recordings. First live runs may need parser adjustments; failures surface as run errors, not fake data.
+15. **API enqueues runs via BullMQ** (Redis) rather than running connectors in-process, so "Run now" uses the same retry, DLQ and rate-limit path as scheduled jobs.

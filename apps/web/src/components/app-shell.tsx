@@ -2,7 +2,7 @@
 import { api } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { CURRENT_VERSION } from "@trendbridge/shared";
-import { Database, Gauge, LineChart, LogOut, Sparkles } from "lucide-react";
+import { Database, Gauge, LineChart, LogOut, Sparkles, Upload } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import type { ReactNode } from "react";
@@ -17,6 +17,7 @@ const NAV = [
   { href: "/", label: "Dashboard", icon: Gauge },
   { href: "/trends", label: "Trend Explorer", icon: LineChart, since: "0.1.0" },
   { href: "/sources", label: "Source Registry", icon: Database, since: "0.1.0" },
+  { href: "/import", label: "Import", icon: Upload, since: "0.2.0" },
   { href: "/whats-new", label: "What's New", icon: Sparkles },
 ];
 
